@@ -31,7 +31,7 @@ class PostFirebaseDatabase : PostFirebaseProvider{
     override fun insertEntry(entry: Post) {
         checkoutUser()
 
-        val entryId = entry.id.toString()
+        val entryId = entry.id
         databaseReference.child("Posts").child(usersUid).child(entryId).setValue(entry)
 
     }

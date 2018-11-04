@@ -15,8 +15,8 @@ import android.util.Log
 import com.example.herben.tripmonitor.common.Injection
 import com.example.herben.tripmonitor.common.SingleLiveEvent
 import com.example.herben.tripmonitor.data.Post
-import com.example.herben.tripmonitor.data.PostDataSource
-import com.example.herben.tripmonitor.data.PostRepository
+import com.example.herben.tripmonitor.data.DataSource
+import com.example.herben.tripmonitor.data.Repository
 import java.util.ArrayList
 
 class BoardViewModel
@@ -40,7 +40,7 @@ class BoardViewModel
 
     private val mOpenEntryEvent = SingleLiveEvent<String>()
 
-    private val mNewEntryEvent = SingleLiveEvent<Void>()
+    private val newEntryEvent = SingleLiveEvent<Void>()
 
     val noTasksLabel = ObservableField<String>()
 
@@ -51,7 +51,7 @@ class BoardViewModel
     @SuppressLint("StaticFieldLeak")
     private var mContext: Context = context.applicationContext // To avoid leaks, this must be an Application Context.
 
-    private lateinit var postRepository: PostRepository
+    private lateinit var postRepository: Repository
 
     fun start() {
         loadEntries(false)
@@ -70,11 +70,11 @@ class BoardViewModel
             dataLoading.set(true)
         }
         if (forceUpdate) {
-            postRepository.refreshEntries()
+            postRepository.refreshPosts()
         }
 
-        postRepository.getEntries(object : PostDataSource.LoadPostsCallback {
-            override fun onEntriesLoaded(entries: List<Post>) {
+        postRepository.getPosts(object : DataSource.LoadCallback<Post> {
+            override fun onLoaded(entries: List<Post>) {
                 val entriesToShow = ArrayList<Post>(entries)
                 if (showLoadingUI) {
                     dataLoading.set(false)
@@ -97,14 +97,14 @@ class BoardViewModel
     }
 
     internal fun getNewEntryEvent(): SingleLiveEvent<Void> {
-        return mNewEntryEvent
+        return newEntryEvent
     }
 
     /**
      * Called by the Data Binding library and the FAB's click listener.
      */
     fun addNewEntry() {
-        mNewEntryEvent.call()
+        newEntryEvent.call()
     }
 
     internal fun handleActivityResult(requestCode: Int, resultCode: Int) {
@@ -118,7 +118,7 @@ class BoardViewModel
     }
 
     fun clearCachedEntries() {
-        postRepository.refreshEntries()
+        postRepository.refreshPosts()
     }
 
 }

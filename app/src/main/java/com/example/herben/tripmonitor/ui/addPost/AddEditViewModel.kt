@@ -11,11 +11,11 @@ import com.example.herben.tripmonitor.common.Injection
 import com.example.herben.tripmonitor.common.SingleLiveEvent
 import com.example.herben.tripmonitor.common.SnackbarMessage
 import com.example.herben.tripmonitor.data.Post
-import com.example.herben.tripmonitor.data.PostDataSource
-import com.example.herben.tripmonitor.data.PostRepository
+import com.example.herben.tripmonitor.data.DataSource
+import com.example.herben.tripmonitor.data.Repository
 import java.util.*
 
-class AddEditPostViewModel(application: Application) : AndroidViewModel(application), PostDataSource.GetPostCallback {
+class AddEditViewModel(application: Application) : AndroidViewModel(application), DataSource.GetCallback<Post> {
 
     val title = ObservableField<String>()
 
@@ -35,14 +35,14 @@ class AddEditPostViewModel(application: Application) : AndroidViewModel(applicat
 
     private var mIsDataLoaded = false
 
-    private lateinit var postRepository: PostRepository
+    private lateinit var postRepository: Repository
 
     private val currentDateTime: Date
         get() = Calendar.getInstance().time
 
     companion object{
-        fun obtain(activity: FragmentActivity): AddEditPostViewModel {
-            var vm = ViewModelProviders.of(activity).get(AddEditPostViewModel::class.java)
+        fun obtain(activity: FragmentActivity): AddEditViewModel {
+            val vm = ViewModelProviders.of(activity).get(AddEditViewModel::class.java)
             vm.postRepository = Injection.provideRepository(activity.applicationContext)
             return vm
         }
@@ -65,10 +65,10 @@ class AddEditPostViewModel(application: Application) : AndroidViewModel(applicat
         }
         isNewEntry = false
         dataLoading.set(true)
-        postRepository.getEntry(entryId, this)
+        postRepository.getPost(entryId, this)
     }
 
-    override fun onPostLoaded(post: Post?) {
+    override fun onLoaded(post: Post?) {
         title.set(post!!.title)
         body.set(post.body)
         dataLoading.set(false)
@@ -95,7 +95,7 @@ class AddEditPostViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     private fun createTask(newEntry: Post) {
-        postRepository.saveEntry(newEntry)
+        postRepository.savePost(newEntry)
         postUpdatedEvent.call()
     }
 
@@ -103,7 +103,7 @@ class AddEditPostViewModel(application: Application) : AndroidViewModel(applicat
         if (isNewEntry) {
             throw RuntimeException("updateTask() was called but task is new.")
         }
-        postRepository.saveEntry(entry)
+        postRepository.savePost(entry)
         postUpdatedEvent.call()
     }
 }

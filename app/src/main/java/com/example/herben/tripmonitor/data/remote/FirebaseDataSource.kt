@@ -3,20 +3,22 @@ package com.example.herben.tripmonitor.data.remote
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Handler
-import android.util.Log
 import com.example.herben.tripmonitor.MainActivity
 import com.example.herben.tripmonitor.common.AppExecutors
 import com.example.herben.tripmonitor.data.Post
-import com.example.herben.tripmonitor.data.PostDataSource
-import com.example.herben.tripmonitor.data.local.PostDao
+import com.example.herben.tripmonitor.data.DataSource
+import com.example.herben.tripmonitor.data.Trip
+import com.example.herben.tripmonitor.ui.addTrip.AddEditTripViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import java.util.ArrayList
 
-class PostFirebaseDataSource private constructor(appExecutors: AppExecutors, provider: PostFirebaseProvider) : PostDataSource {
+class FirebaseDataSource private constructor(appExecutors: AppExecutors, provider: PostFirebaseProvider) : DataSource {
+    override fun saveTrip(trip: Trip) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getTrip(entryId: String, addEditTripViewModel: AddEditTripViewModel) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     private val SERVICE_LATENCY_MS = 3000L
 
@@ -29,18 +31,18 @@ class PostFirebaseDataSource private constructor(appExecutors: AppExecutors, pro
         checkoutUser()
     }
 
-    override fun getEntries(callback: PostDataSource.LoadPostsCallback) {
+    override fun getPosts(callback: DataSource.LoadCallback<Post>) {
         val entryList = postProvider.getAllEntries()
         val handler = Handler()
-        handler.postDelayed({ callback.onEntriesLoaded(entryList) }, SERVICE_LATENCY_MS)
+        handler.postDelayed({ callback.onLoaded(entryList) }, SERVICE_LATENCY_MS)
     }
 
-    override fun getEntry(entryId: String, callback: PostDataSource.GetPostCallback) {
+    override fun getPost(entryId: String, callback: DataSource.GetCallback<Post>) {
         val runnable = Runnable {
             val postEntry = postProvider.getEntryById(entryId)
             appExecutors.mainThread().execute {
                 if (postEntry != null) {
-                    callback.onPostLoaded(postEntry)
+                    callback.onLoaded(postEntry)
                 } else {
                     callback.onDataNotAvailable()
                 }
@@ -49,25 +51,25 @@ class PostFirebaseDataSource private constructor(appExecutors: AppExecutors, pro
         appExecutors.networkIO().execute(runnable)
     }
 
-    override fun saveEntry(entry: Post) {
+    override fun savePost(entry: Post) {
         checkNotNull(entry)
         val runnable = Runnable { postProvider.insertEntry(entry) }
         appExecutors.networkIO().execute(runnable)
     }
 
-    override fun deleteEntry(entryId: String) {
+    override fun deletePost(entryId: String) {
         val runnable = Runnable { postProvider.deleteEntry(entryId) }
         appExecutors.networkIO().execute(runnable)
     }
 
-    override fun refreshEntries() {
+    override fun refreshPosts() {
         // Not required because the {@link EntryRepository} handles the logic of refreshing the
         // entries from all the available data sources.
         // todo:setup repository to get from local or remote depending on the needs
     }
 
 
-    override fun deleteAllEntries() {
+    override fun deleteAllPosts() {
         //todo:add delete all entries logic here
     }
 
@@ -82,11 +84,11 @@ class PostFirebaseDataSource private constructor(appExecutors: AppExecutors, pro
 
     companion object {
 
-        private var INSTANCE: PostFirebaseDataSource? = null
+        private var INSTANCE: FirebaseDataSource? = null
 
-        fun getInstance(appExecutors: AppExecutors, postDatabase: PostFirebaseDatabase): PostFirebaseDataSource {
+        fun getInstance(appExecutors: AppExecutors, postDatabase: PostFirebaseDatabase): FirebaseDataSource {
             if (INSTANCE == null) {
-                INSTANCE = PostFirebaseDataSource(appExecutors, postDatabase)
+                INSTANCE = FirebaseDataSource(appExecutors, postDatabase)
             }
             return INSTANCE!!
         }

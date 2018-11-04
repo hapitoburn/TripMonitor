@@ -1,5 +1,6 @@
-package com.example.herben.tripmonitor.ui.addPost
+package com.example.herben.tripmonitor.ui.addTrip
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.design.widget.FloatingActionButton
@@ -11,32 +12,27 @@ import android.view.ViewGroup
 import com.example.herben.tripmonitor.R
 import com.example.herben.tripmonitor.common.SnackbarMessage
 import com.example.herben.tripmonitor.common.Utils
-import com.example.herben.tripmonitor.databinding.AddeditPostFragmentBinding
+import com.example.herben.tripmonitor.databinding.AddeditTripFragmentBinding
 
-class AddEditPostFragment : Fragment() {
-    private var viewModel : AddEditViewModel? = null
-    private var dataBinding : AddeditPostFragmentBinding? = null
+class AddEditTripFragment : Fragment() {
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        loadData()
-
-        setupFab()
-
-        setupSnackbar()
-
-        setupActionBar()
+    companion object {
+        fun newInstance() = AddEditTripFragment()
+        const val ARGUMENT_EDIT_TRIP_ID = "EDIT_ENTRY_ID"
     }
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val root = inflater.inflate(R.layout.addedit_post_fragment, container, false)
+    private lateinit var viewModel: AddEditTripViewModel
+    private var dataBinding : AddeditTripFragmentBinding? = null
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View {
+        val root = inflater.inflate(R.layout.addedit_trip_fragment, container, false)
 
         if (dataBinding == null) {
-            dataBinding = AddeditPostFragmentBinding.bind(root)
+            dataBinding = AddeditTripFragmentBinding.bind(root)
         }
 
-        viewModel = AddEditViewModel.obtain(activity!!)
+        viewModel = AddEditTripViewModel.obtain(activity!!)
 
         dataBinding!!.setViewmodel(viewModel)
 
@@ -45,17 +41,29 @@ class AddEditPostFragment : Fragment() {
 
         return dataBinding!!.getRoot()
     }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        loadData()
+
+        setupFab()
+
+        setupSnackbar()
+
+        setupActionBar()
+    }
+
     private fun loadData() {
         // Add or edit an existing task?
         if (arguments != null) {
-            viewModel!!.start(arguments?.getString(ARGUMENT_EDIT_ENTRY_ID))
+            viewModel.start(arguments?.getString(ARGUMENT_EDIT_TRIP_ID))
         } else {
-            viewModel!!.start(null)
+            viewModel.start(null)
         }
     }
 
     private fun setupSnackbar() {
-        viewModel!!.snackbarMessage.observe(this, object : SnackbarMessage.SnackbarObserver {
+        viewModel.snackbarMessage.observe(this, object : SnackbarMessage.SnackbarObserver {
             override fun onNewMessage(@StringRes snackbarMessageResourceId: Int) {
                 Utils.showSnackbar(view, getString(snackbarMessageResourceId))
             }
@@ -65,20 +73,17 @@ class AddEditPostFragment : Fragment() {
     private fun setupFab() {
         val fab : FloatingActionButton? = activity?.findViewById(R.id.fab_edit_task_done)
         //fab.setImageResource(R.drawable.ic_done)
-        fab?.setOnClickListener { viewModel!!.saveEntry() }
+        fab?.setOnClickListener { viewModel.saveEntry() }
     }
 
     private fun setupActionBar() {
         val actionBar = (activity as AppCompatActivity).supportActionBar ?: return
-        if (arguments != null && arguments!!.get(ARGUMENT_EDIT_ENTRY_ID) != null) {
+        if (arguments != null && arguments!!.get(ARGUMENT_EDIT_TRIP_ID) != null) {
             actionBar.setTitle(R.string.edit_post)
 
         } else {
             actionBar.setTitle(R.string.add_post)
         }
     }
-    
-    companion object {
-        val ARGUMENT_EDIT_ENTRY_ID = "EDIT_ENTRY_ID"
-    }
+
 }

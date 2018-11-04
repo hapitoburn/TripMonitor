@@ -12,7 +12,9 @@ import com.example.herben.tripmonitor.data.Post
 @TypeConverters(DateConverter::class)
 abstract class PostDatabase : RoomDatabase() {
 
-    abstract fun postDao(): PostDao
+    abstract fun posts(): PostDao
+    abstract fun trips(): TripDao
+    abstract fun users(): UserDao
 
     companion object {
         private var INSTANCE: PostDatabase? = null

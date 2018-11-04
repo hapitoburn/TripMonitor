@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/head">
+        <item android:title="@string/active_group"/>
+        <item
+            android:id="@+id/active_group"
+            android:title=""/>
+    </group>
+    <group android:id="@+id/other">
+        <item
+            android:id="@+id/groups"
+            android:title="@string/groups" />
+        <item
+            android:id="@+id/profile"
+            android:title="@string/profile" />
+        <!--android:icon="@drawable/ic_menu_gallery"-->
+        <item
+            android:id="@+id/alarms"
+            android:title="@string/alarms" />
+        <item
+            android:id="@+id/contact"
+            android:title="@string/contact" />
+    </group>
+</menu>

@@ -1,14 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
     <data>
-
         <import type="android.view.View"/>
-
         <variable
             name="viewmodel"
-            type="com.example.herben.tripmonitor.ui.addPost.AddEditViewModel"
-            />
+            type="com.example.herben.tripmonitor.ui.addTrip.AddEditTripViewModel"/>
     </data>
 
     <android.support.v4.widget.SwipeRefreshLayout
@@ -39,7 +36,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/title"
                     android:maxLines="1"
-                    android:text="@={viewmodel.title}"
+                    android:text="@={viewmodel.name}"
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
 
                 <EditText

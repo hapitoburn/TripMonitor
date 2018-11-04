@@ -4,7 +4,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.herben.tripmonitor.data.Post
-import com.example.herben.tripmonitor.databinding.PostsListItemBinding;
+import com.example.herben.tripmonitor.databinding.PostsListItemBinding
 
 class BoardAdapter(/*private val mOnClickListener: ListItemClickListener?*/) : RecyclerView.Adapter<BoardAdapter.PostsViewHolder>() {
 
@@ -56,7 +56,7 @@ class BoardAdapter(/*private val mOnClickListener: ListItemClickListener?*/) : R
         }
 /*
         init {
-            title = itemView.findViewById(R.id.title)
+            name = itemView.findViewById(R.id.name)
             date = itemView.findViewById(R.id.edit_date)
             time = itemView.findViewById(R.id.time)
         }

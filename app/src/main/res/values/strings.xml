@@ -16,4 +16,13 @@
     <string name="title">title</string>
     <string name="body">body</string>
     <string name="title_activity_addedit_post">Add edit post</string>
+    <string name="groups">groups</string>
+    <string name="profile">profile</string>
+    <string name="alarms">alarms</string>
+    <string name="contact">contact</string>
+    <string name="active_group">Active group</string>
+    <string name="empty_trip_message">Fill your trip fields</string>
+    <string name="name">name</string>
+    <string name="date_from">date from</string>
+    <string name="date_to">date to</string>
 </resources>

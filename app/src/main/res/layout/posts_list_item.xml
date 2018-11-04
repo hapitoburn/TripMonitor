@@ -13,7 +13,7 @@
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_marginTop="8dp"
-            android:text="title"
+            android:text="@string/title"
             android:textColor="#000000"
             android:textSize="22sp"
             app:layout_constraintTop_toTopOf="parent" />
@@ -26,7 +26,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text=" Created:"
+            android:text="Created:"
             android:textColor="#000000"
             app:layout_constraintStart_toStartOf="@+id/body"
             app:layout_constraintTop_toBottomOf="@+id/body" />
@@ -47,11 +47,11 @@
         <TextView
             android:id="@+id/body"
             android:layout_width="match_parent"
-            android:layout_height="27dp"
+            android:layout_height="wrap_content"
             android:layout_below="@id/edit_date"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="8dp"
-            android:text="body"
+            android:text="@string/body"
             android:textColor="#000000"
             app:layout_constraintTop_toBottomOf="@+id/title" />
     </android.support.constraint.ConstraintLayout>

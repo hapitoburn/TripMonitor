@@ -1,13 +1,10 @@
 package com.example.herben.tripmonitor.ui.addPost
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import com.example.herben.tripmonitor.R
-import com.example.herben.tripmonitor.common.Injection
 import com.example.herben.tripmonitor.common.Utils
 
 class AddEditPostActivity : AppCompatActivity() {
@@ -19,7 +16,7 @@ class AddEditPostActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.addedit_post_activity)
+        setContentView(R.layout.addedit_activity)
 
         setUpToolbar()
 
@@ -35,9 +32,8 @@ class AddEditPostActivity : AppCompatActivity() {
         finish()
     }
 
-
     private fun subscribeToNavigationChanges() {
-        val viewModel = AddEditPostViewModel.obtain(this)
+        val viewModel = AddEditViewModel.obtain(this)
         // The activity observes the navigation events in the ViewModel
         viewModel.postUpdatedEvent.observe(this, Observer { this@AddEditPostActivity.onEntrySaved() })
     }

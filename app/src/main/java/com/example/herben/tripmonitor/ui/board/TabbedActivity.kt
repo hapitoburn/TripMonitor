@@ -17,6 +17,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.herben.tripmonitor.R
 import com.example.herben.tripmonitor.ui.addPost.AddEditPostActivity
+import com.example.herben.tripmonitor.ui.addTrip.AddEditTripActivity
+import com.example.herben.tripmonitor.ui.trip.TripOverwiewFragment
 
 import kotlinx.android.synthetic.main.activity_tabbed.*
 import kotlinx.android.synthetic.main.fragment_tabbed.view.*
@@ -64,6 +66,11 @@ class TabbedActivity : AppCompatActivity() {
         startActivityForResult(intent, AddEditPostActivity.REQUEST_CODE)
     }
 
+
+    private fun addNewTrip() {
+        val intent = Intent(this, AddEditTripActivity::class.java)
+        startActivityForResult(intent, AddEditTripActivity.REQUEST_CODE)
+    }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_tabbed, menu)
@@ -93,6 +100,7 @@ class TabbedActivity : AppCompatActivity() {
         override fun getItem(position: Int): Fragment {
             return when(position){
                 1 -> BoardFragment()
+                2 -> TripOverwiewFragment()
                 else -> PlaceholderFragment.newInstance(position + 1)
             }
         }

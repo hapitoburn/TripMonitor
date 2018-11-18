@@ -8,7 +8,9 @@ import com.example.herben.tripmonitor.R
 import com.example.herben.tripmonitor.common.Utils
 
 class AddEditTripActivity : AppCompatActivity() {
-
+    companion object {
+        val REQUEST_CODE = 2
+    }
     private val ADD_EDIT_RESULT_OK: Int = Activity.RESULT_FIRST_USER + 2
 
     override fun onCreate(savedInstanceState: Bundle?) {

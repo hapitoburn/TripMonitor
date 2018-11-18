@@ -2,6 +2,7 @@ package com.example.herben.tripmonitor.ui.addTrip
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProviders
+import android.databinding.ObservableArrayList
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.support.v4.app.FragmentActivity
@@ -19,6 +20,7 @@ class AddEditTripViewModel : ViewModel(), DataSource.GetCallback<Trip>{
     val body = ObservableField<String>()
     val dateFrom = ObservableField<Date>()
     val dateTo = ObservableField<Date>()
+    val places = ObservableArrayList<String>()
     val dataLoading = ObservableBoolean(false)
 
     internal val snackbarMessage = SnackbarMessage()
@@ -77,7 +79,7 @@ class AddEditTripViewModel : ViewModel(), DataSource.GetCallback<Trip>{
 
     // Called when clicking on fab.
     internal fun saveEntry() {
-        var trip = Trip(name.get(), body.get(), dateFrom.get(), dateTo.get())
+        var trip = Trip(name.get(), body.get(), dateFrom.get(), dateTo.get(), places)
         if (trip.isEmpty()) {
             snackbarMessage.setValue(R.string.empty_trip_message)
             return
@@ -85,7 +87,7 @@ class AddEditTripViewModel : ViewModel(), DataSource.GetCallback<Trip>{
         if (isNewEntry || mEntryId == null) {
             createTrip(trip)
         } else {
-            trip = Trip(name.get(), body.get(),  dateFrom.get(), dateTo.get(), mEntryId!!)
+            trip = Trip(name.get(), body.get(),  dateFrom.get(), dateTo.get(), places, mEntryId!!)
             updateTrip(trip)
         }
     }

@@ -5,6 +5,7 @@ import com.example.herben.tripmonitor.data.Post
 import com.example.herben.tripmonitor.data.DataSource
 import com.example.herben.tripmonitor.data.Trip
 import com.example.herben.tripmonitor.ui.addTrip.AddEditTripViewModel
+import com.example.herben.tripmonitor.ui.trip.TripOverwiewViewModel
 
 
 class LocalDataSource// Prevent direct instantiation.
@@ -12,12 +13,19 @@ private constructor(private val appExecutors: AppExecutors,
                     private val posts: PostDao,
                     private val users: UserDao,
                     private val trips: TripDao) : DataSource {
-    override fun saveTrip(trip: Trip) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getTrip(entryId: String, callback: DataSource.GetCallback<Trip>) {
     }
 
-    override fun getTrip(entryId: String, addEditTripViewModel: AddEditTripViewModel) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getTrips(callback: DataSource.LoadCallback<Trip>) {
+    }
+
+    override fun deleteTrip(entryId: String) {
+    }
+
+    override fun refreshTrips() {
+    }
+
+    override fun saveTrip(trip: Trip) {
     }
 
     override fun getPosts(callback: DataSource.LoadCallback<Post>) {
@@ -77,7 +85,7 @@ private constructor(private val appExecutors: AppExecutors,
         @Volatile
         private var INSTANCE: LocalDataSource? = null
 
-        fun getInstance(appExecutors: AppExecutors, database: PostDatabase): LocalDataSource {
+        fun getInstance(appExecutors: AppExecutors, database: LocalDatabase): LocalDataSource {
             if (INSTANCE == null) {
                 synchronized(LocalDataSource::class.java) {
                     if (INSTANCE == null) {

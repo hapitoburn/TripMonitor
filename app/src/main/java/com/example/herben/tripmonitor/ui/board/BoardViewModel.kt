@@ -62,7 +62,7 @@ class BoardViewModel
     }
 
     /**
-     * @param forceUpdate   Pass in true to refresh the data in the [syfy.co.za.journal.data.source.JournalDataSource]
+     * @param forceUpdate   Pass in true to refresh the data in the
      * @param showLoadingUI Pass in true to display a loading icon in the UI
      */
     private fun loadEntries(forceUpdate: Boolean, showLoadingUI: Boolean) {

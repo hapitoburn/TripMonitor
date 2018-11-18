@@ -3,11 +3,11 @@ package com.example.herben.tripmonitor.data.remote
 import com.example.herben.tripmonitor.data.Post
 
 interface PostFirebaseProvider {
-    fun insertEntry(entry: Post)
+    fun insertPost(entry: Post)
 
-    fun deleteEntry(entryId: String)
+    fun deletePost(entryId: String)
 
-    fun getAllEntries(): List<Post>
+    fun getAllPosts(): List<Post>
 
-    fun getEntryById(entryId: String): Post?
+    fun getPostById(entryId: String): Post?
 }

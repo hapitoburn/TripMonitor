@@ -68,9 +68,9 @@ class AddEditViewModel(application: Application) : AndroidViewModel(application)
         postRepository.getPost(entryId, this)
     }
 
-    override fun onLoaded(post: Post?) {
-        title.set(post!!.title)
-        body.set(post.body)
+    override fun onLoaded(entity: Post?) {
+        title.set(entity!!.title)
+        body.set(entity.body)
         dataLoading.set(false)
         mIsDataLoaded = true
     }

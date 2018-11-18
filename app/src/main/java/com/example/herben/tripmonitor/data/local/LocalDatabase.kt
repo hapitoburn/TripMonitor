@@ -10,20 +10,20 @@ import com.example.herben.tripmonitor.data.Post
 
 @Database(entities = arrayOf(Post::class), version = 3)
 @TypeConverters(DateConverter::class)
-abstract class PostDatabase : RoomDatabase() {
+abstract class LocalDatabase : RoomDatabase() {
 
     abstract fun posts(): PostDao
     abstract fun trips(): TripDao
     abstract fun users(): UserDao
 
     companion object {
-        private var INSTANCE: PostDatabase? = null
+        private var INSTANCE: LocalDatabase? = null
 
-        fun getInstance(context: Context): PostDatabase {
+        fun getInstance(context: Context): LocalDatabase {
             if (INSTANCE == null) {
-                synchronized(PostDatabase::class) {
+                synchronized(LocalDatabase::class) {
                     INSTANCE = Room.databaseBuilder(context.applicationContext,
-                            PostDatabase::class.java, "Posts.db")
+                            LocalDatabase::class.java, "Posts.db")
                             .fallbackToDestructiveMigration()
                             .build()
                 }

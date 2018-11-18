@@ -28,7 +28,7 @@ class PostFirebaseDatabase : PostFirebaseProvider{
         }
     }
 
-    override fun insertEntry(entry: Post) {
+    override fun insertPost(entry: Post) {
         checkoutUser()
 
         val entryId = entry.id
@@ -36,12 +36,12 @@ class PostFirebaseDatabase : PostFirebaseProvider{
 
     }
 
-    override fun deleteEntry(entryId: String) {
+    override fun deletePost(entryId: String) {
         checkoutUser()
 
     }
 
-    override fun getAllEntries(): List<Post> {
+    override fun getAllPosts(): List<Post> {
         checkoutUser()
         postEntries = mutableListOf()
         databaseReference.child("Posts").child(usersUid).addValueEventListener(object : ValueEventListener {
@@ -60,10 +60,10 @@ class PostFirebaseDatabase : PostFirebaseProvider{
         return postEntries
     }
 
-    override fun getEntryById(entryId: String): Post? {
+    override fun getPostById(entryId: String): Post? {
         checkoutUser()
 
-        databaseReference.child("Posts").child(usersUid).child(entryId.toString()).addValueEventListener(object : ValueEventListener {
+        databaseReference.child("Posts").child(usersUid).child(entryId).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 postEntry = dataSnapshot.getValue<Post>(Post::class.java)
             }

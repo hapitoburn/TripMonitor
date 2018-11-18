@@ -9,14 +9,26 @@ import com.example.herben.tripmonitor.data.Post
 import com.example.herben.tripmonitor.data.DataSource
 import com.example.herben.tripmonitor.data.Trip
 import com.example.herben.tripmonitor.ui.addTrip.AddEditTripViewModel
+import com.example.herben.tripmonitor.ui.trip.TripOverwiewViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 class FirebaseDataSource private constructor(appExecutors: AppExecutors, provider: PostFirebaseProvider) : DataSource {
-    override fun saveTrip(trip: Trip) {
+    override fun getTrip(entryId: String, callback: DataSource.GetCallback<Trip>) {
+    }
+
+    override fun getTrips(callback: DataSource.LoadCallback<Trip>) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getTrip(entryId: String, addEditTripViewModel: AddEditTripViewModel) {
+    override fun deleteTrip(entryId: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun refreshTrips() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun saveTrip(trip: Trip) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -32,14 +44,14 @@ class FirebaseDataSource private constructor(appExecutors: AppExecutors, provide
     }
 
     override fun getPosts(callback: DataSource.LoadCallback<Post>) {
-        val entryList = postProvider.getAllEntries()
+        val entryList = postProvider.getAllPosts()
         val handler = Handler()
         handler.postDelayed({ callback.onLoaded(entryList) }, SERVICE_LATENCY_MS)
     }
 
     override fun getPost(entryId: String, callback: DataSource.GetCallback<Post>) {
         val runnable = Runnable {
-            val postEntry = postProvider.getEntryById(entryId)
+            val postEntry = postProvider.getPostById(entryId)
             appExecutors.mainThread().execute {
                 if (postEntry != null) {
                     callback.onLoaded(postEntry)
@@ -53,12 +65,12 @@ class FirebaseDataSource private constructor(appExecutors: AppExecutors, provide
 
     override fun savePost(entry: Post) {
         checkNotNull(entry)
-        val runnable = Runnable { postProvider.insertEntry(entry) }
+        val runnable = Runnable { postProvider.insertPost(entry) }
         appExecutors.networkIO().execute(runnable)
     }
 
     override fun deletePost(entryId: String) {
-        val runnable = Runnable { postProvider.deleteEntry(entryId) }
+        val runnable = Runnable { postProvider.deletePost(entryId) }
         appExecutors.networkIO().execute(runnable)
     }
 
@@ -86,9 +98,9 @@ class FirebaseDataSource private constructor(appExecutors: AppExecutors, provide
 
         private var INSTANCE: FirebaseDataSource? = null
 
-        fun getInstance(appExecutors: AppExecutors, postDatabase: PostFirebaseDatabase): FirebaseDataSource {
+        fun getInstance(appExecutors: AppExecutors, LocalDatabase: PostFirebaseDatabase): FirebaseDataSource {
             if (INSTANCE == null) {
-                INSTANCE = FirebaseDataSource(appExecutors, postDatabase)
+                INSTANCE = FirebaseDataSource(appExecutors, LocalDatabase)
             }
             return INSTANCE!!
         }

@@ -8,14 +8,25 @@ import java.util.*
 
 class Repository private constructor(private val remoteDataSource: DataSource,
                                      private val localDataSource: DataSource) : DataSource {
+    override fun getTrip(entryId: String, callback: GetCallback<Trip>) {
+
+    }
+
+    override fun getTrips(callback: LoadCallback<Trip>) {
+        getTripsFromRemoteDataSource(callback)
+    }
+
+    override fun deleteTrip(entryId: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun refreshTrips() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun saveTrip(trip: Trip) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
-
-    override fun getTrip(entryId: String, addEditTripViewModel: AddEditTripViewModel) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
 
     internal var mCachedTasks: MutableMap<String, Post> = LinkedHashMap()
 
@@ -70,14 +81,14 @@ class Repository private constructor(private val remoteDataSource: DataSource,
             override fun onDataNotAvailable() {
 
                 remoteDataSource.getPost(entryId, object : GetCallback<Post> {
-                    override fun onLoaded(post: Post?) {
-                        if (post == null) {
+                    override fun onLoaded(entity: Post?) {
+                        if (entity == null) {
                             onDataNotAvailable()
                             return
                         }
 
-                        mCachedTasks[post.id] = post
-                        callback.onLoaded(post)
+                        mCachedTasks[entity.id] = entity
+                        callback.onLoaded(entity)
                     }
 
                     override fun onDataNotAvailable() {
@@ -121,6 +132,18 @@ class Repository private constructor(private val remoteDataSource: DataSource,
                 refreshCache(entries)
                 refreshLocalDataSource(entries)
                 callback.onLoaded(ArrayList<Post>(mCachedTasks.values))
+            }
+
+            override fun onDataNotAvailable() {
+                callback.onDataNotAvailable()
+            }
+        })
+    }
+
+    private fun getTripsFromRemoteDataSource(callback: LoadCallback<Trip>) {
+        remoteDataSource.getTrips(object : LoadCallback<Trip> {
+            override fun onLoaded(entries: List<Trip>) {
+                callback.onLoaded(emptyList())
             }
 
             override fun onDataNotAvailable() {

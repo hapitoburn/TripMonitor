@@ -34,7 +34,7 @@ class AddEditTripFragment : Fragment() {
 
         viewModel = AddEditTripViewModel.obtain(activity!!)
 
-        dataBinding!!.setViewmodel(viewModel)
+        dataBinding!!.viewmodel = viewModel
 
         setHasOptionsMenu(true)
         retainInstance = false
@@ -79,7 +79,7 @@ class AddEditTripFragment : Fragment() {
     private fun setupActionBar() {
         val actionBar = (activity as AppCompatActivity).supportActionBar ?: return
         if (arguments != null && arguments!!.get(ARGUMENT_EDIT_TRIP_ID) != null) {
-            actionBar.setTitle(R.string.edit_post)
+            actionBar.setTitle(R.string.edit_trip)
 
         } else {
             actionBar.setTitle(R.string.add_post)

@@ -12,9 +12,9 @@ import com.example.herben.tripmonitor.databinding.FragmentPostsBinding;
 class BoardFragment : Fragment()/*, BoardAdapter.ListItemClickListener*/ {
 
     private var board: BoardViewModel? = null
-    private var postsBinding: FragmentPostsBinding? = null
+    private var binding: FragmentPostsBinding? = null
 
-    private var boardAdapter: BoardAdapter = BoardAdapter()
+    private var adapter: BoardAdapter = BoardAdapter()
 
     private var entriesList: RecyclerView? = null
 
@@ -26,15 +26,15 @@ class BoardFragment : Fragment()/*, BoardAdapter.ListItemClickListener*/ {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        postsBinding = FragmentPostsBinding.inflate(inflater, container, false)
+        binding = FragmentPostsBinding.inflate(inflater, container, false)
 
         board = BoardViewModel.obtain(activity!!)
 
-        postsBinding!!.viewmodel = board
+        binding!!.viewmodel = board
 
         setHasOptionsMenu(true)
 
-        return postsBinding?.root
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,7 +48,7 @@ class BoardFragment : Fragment()/*, BoardAdapter.ListItemClickListener*/ {
 
         //entriesList.addItemDecoration(SimpleDividerItemDecoration(context))
 
-        entriesList!!.adapter = boardAdapter
+        entriesList!!.adapter = adapter
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

@@ -9,7 +9,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 
-class PostFirebaseDatabase : PostFirebaseProvider{
+class RemoteDatabase : FirebaseProvider{
     private val databaseReference = FirebaseDatabase.getInstance().reference
     private var postEntry: Post? = null
     private var postEntries: MutableList<Post> = mutableListOf()
@@ -76,11 +76,11 @@ class PostFirebaseDatabase : PostFirebaseProvider{
     }
     companion object {
 
-        private var INSTANCE: PostFirebaseDatabase? = null
+        private var INSTANCE: RemoteDatabase? = null
 
-        fun getInstance(): PostFirebaseDatabase {
+        fun getInstance(): RemoteDatabase {
             if (INSTANCE == null) {
-                INSTANCE = PostFirebaseDatabase()
+                INSTANCE = RemoteDatabase()
             }
             return INSTANCE!!
         }

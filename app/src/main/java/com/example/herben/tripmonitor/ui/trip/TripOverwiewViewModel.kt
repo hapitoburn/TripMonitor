@@ -3,8 +3,10 @@ package com.example.herben.tripmonitor.ui.trip
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.ViewModelProviders
+import android.databinding.ObservableArrayList
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
+import android.databinding.ObservableList
 import android.graphics.drawable.Drawable
 import android.support.v4.app.FragmentActivity
 import com.example.herben.tripmonitor.common.Injection
@@ -20,6 +22,12 @@ class TripOverwiewViewModel (context: Application) : AndroidViewModel(context) {
     val empty = ObservableBoolean(false)
 
     val trip: ObservableField<Trip> = ObservableField()
+    var name = ObservableField<String>()
+    var body = ObservableField<String>()
+    var dateFrom = ObservableField<Date>()
+    var dateTo = ObservableField<Date>()
+    val places: ObservableList<String> = ObservableArrayList<String>()
+    var id = ObservableField<String>()
 
     val noTasksLabel = ObservableField<String>()
 
@@ -71,7 +79,7 @@ class TripOverwiewViewModel (context: Application) : AndroidViewModel(context) {
             isDataLoading.set(true)
         }
         if (forceUpdate) {
-            repository.refreshPosts()
+            repository.refreshTrips()
         }
 
         repository.getTrip(tripId, object : DataSource.GetCallback<Trip> {

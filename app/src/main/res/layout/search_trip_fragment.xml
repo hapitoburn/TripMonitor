@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.searchTrip.SearchTripFragment">
+    <data>
+        <import type="android.view.View" />
+
+        <variable
+            name="viewmodel"
+            type="com.example.herben.tripmonitor.ui.searchTrip.SearchTripViewModel" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/textInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/searchButton">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/searchInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="1dp"
+                android:hint="hint" />
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:id="@+id/searchButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="search"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/item_search_trips"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
+            app:items="@{viewmodel.trips}">
+
+        </android.support.v7.widget.RecyclerView>
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

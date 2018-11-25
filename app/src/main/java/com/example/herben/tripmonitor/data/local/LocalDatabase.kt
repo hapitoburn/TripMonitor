@@ -7,8 +7,9 @@ import android.arch.persistence.room.TypeConverters
 import android.content.Context
 import com.example.herben.tripmonitor.common.DateConverter
 import com.example.herben.tripmonitor.data.Post
+import com.example.herben.tripmonitor.data.Trip
 
-@Database(entities = arrayOf(Post::class), version = 3)
+@Database(entities = arrayOf(Post::class, Trip::class), version = 4)
 @TypeConverters(DateConverter::class)
 abstract class LocalDatabase : RoomDatabase() {
 
@@ -23,7 +24,7 @@ abstract class LocalDatabase : RoomDatabase() {
             if (INSTANCE == null) {
                 synchronized(LocalDatabase::class) {
                     INSTANCE = Room.databaseBuilder(context.applicationContext,
-                            LocalDatabase::class.java, "Posts.db")
+                            LocalDatabase::class.java, "tripMonitor.db")
                             .fallbackToDestructiveMigration()
                             .build()
                 }

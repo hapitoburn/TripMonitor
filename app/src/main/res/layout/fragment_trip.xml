@@ -25,10 +25,10 @@
             android:clickable="true"
             android:orientation="vertical"
             android:focusable="true">
-            <LinearLayout
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{viewmodel.trip.body}" />
+                android:text="@{viewmodel.body}" />
             <LinearLayout
                 android:id="@+id/tasksLL"
                 android:layout_width="match_parent"
@@ -36,8 +36,8 @@
                 android:orientation="vertical"
                 android:visibility="@{viewmodel.empty ? View.GONE : View.VISIBLE}">
                 <android.support.v7.widget.RecyclerView
-                    android:id="@+id/posts_list"
-                    app:items="@{viewmodel.trip.places}"
+                    android:id="@+id/item_trip_place"
+                    app:items="@{viewmodel.places}"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     />

@@ -1,55 +1,59 @@
-package com.example.herben.tripmonitor.ui.trip
+package com.example.herben.tripmonitor.ui.searchTrip
 
-import android.arch.lifecycle.ViewModelProviders
-import android.databinding.BindingAdapter
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.*
-import com.example.herben.tripmonitor.databinding.FragmentTripBinding
+import com.example.herben.tripmonitor.databinding.SearchTripFragmentBinding
 
 import com.example.herben.tripmonitor.R
 
-class TripOverwiewFragment () : Fragment() {
+class SearchTripFragment : Fragment() {
 
     companion object {
-        fun newInstance(tripId : String) : TripOverwiewFragment{
-            var fragment = TripOverwiewFragment()
-            fragment.tripId = tripId
-            return fragment
-        }
+        fun newInstance() = SearchTripFragment()
     }
+    private var binding: SearchTripFragmentBinding? = null
 
-    private lateinit var viewModel: TripOverwiewViewModel
-
-    private var postsBinding: FragmentTripBinding? = null
-
-    private var tripId: String = String()
-
-    private var adapter: TripOverviewAdapter = TripOverviewAdapter()
+    private var adapter: SearchTripAdapter = SearchTripAdapter()
 
     private var entriesList: RecyclerView? = null
 
+    private lateinit var viewModel: SearchTripViewModel
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        postsBinding = FragmentTripBinding.inflate(inflater, container, false)
 
-        viewModel = TripOverwiewViewModel.obtain(activity!!, tripId)
+        binding = SearchTripFragmentBinding.inflate(inflater, container, false)
 
-        postsBinding!!.viewmodel = viewModel
+        viewModel = SearchTripViewModel.obtain(activity!!)
+
+        binding!!.viewmodel = viewModel
 
         setHasOptionsMenu(true)
 
-        return postsBinding?.root
+        return binding?.root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        setupFab()
         // TODO: Use the ViewModel
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.start()
+    }
+
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        entriesList = view.findViewById(R.id.item_trip_place)
+        entriesList = view.findViewById(R.id.posts_list)
 
         val layoutManager = LinearLayoutManager(context)
 
@@ -58,11 +62,6 @@ class TripOverwiewFragment () : Fragment() {
         //entriesList.addItemDecoration(SimpleDividerItemDecoration(context))
 
         entriesList!!.adapter = adapter
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.start()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -75,7 +74,7 @@ class TripOverwiewFragment () : Fragment() {
 
     private fun setupFab() {
         val fab = activity!!.findViewById(R.id.fab_action_add) as FloatingActionButton
-        //fab.setOnClickListener { viewModel?.addNewEntry() }
+        fab.setOnClickListener { viewModel.addNewEntry() }
     }
 
 
@@ -85,15 +84,5 @@ class TripOverwiewFragment () : Fragment() {
         }
         return true
     }*/
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        //setupSnackbar()
-
-        setupFab()
-
-        //setupRefreshLayout()
-    }
 
 }

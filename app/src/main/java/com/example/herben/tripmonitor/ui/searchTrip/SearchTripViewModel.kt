@@ -1,8 +1,7 @@
-package com.example.herben.tripmonitor.ui.board
+package com.example.herben.tripmonitor.ui.searchTrip
 
 import android.annotation.SuppressLint
-import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
+import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.databinding.ObservableArrayList
@@ -14,17 +13,16 @@ import android.support.v4.app.FragmentActivity
 import android.util.Log
 import com.example.herben.tripmonitor.common.Injection
 import com.example.herben.tripmonitor.common.SingleLiveEvent
-import com.example.herben.tripmonitor.data.Post
 import com.example.herben.tripmonitor.data.DataSource
+import com.example.herben.tripmonitor.data.Post
 import com.example.herben.tripmonitor.data.Repository
+import com.example.herben.tripmonitor.data.Trip
 import java.util.ArrayList
 
-class BoardViewModel
-(context: Application) : AndroidViewModel(context) {
-
+class SearchTripViewModel : ViewModel() {
     companion object{
-        fun obtain(activity: FragmentActivity): BoardViewModel{
-            var vm = ViewModelProviders.of(activity).get(BoardViewModel::class.java)
+        fun obtain(activity: FragmentActivity): SearchTripViewModel{
+            var vm = ViewModelProviders.of(activity).get(SearchTripViewModel::class.java)
             vm.repository = Injection.provideRepository(activity.applicationContext)
             return vm
         }
@@ -36,7 +34,7 @@ class BoardViewModel
 
     val empty = ObservableBoolean(false)
 
-    val posts: ObservableList<Post> = ObservableArrayList<Post>()
+    val trips: ObservableList<Trip> = ObservableArrayList<Trip>()
 
     private val mOpenEntryEvent = SingleLiveEvent<String>()
 
@@ -47,9 +45,6 @@ class BoardViewModel
     val noTaskIconRes = ObservableField<Drawable>()
 
     val entriesAddViewVisible = ObservableBoolean()
-
-    @SuppressLint("StaticFieldLeak")
-    private var mContext: Context = context.applicationContext // To avoid leaks, this must be an Application Context.
 
     private lateinit var repository: Repository
 
@@ -70,20 +65,20 @@ class BoardViewModel
             dataLoading.set(true)
         }
         if (forceUpdate) {
-            repository.refreshPosts()
+            repository.refreshTrips()
         }
 
-        repository.getPosts(object : DataSource.LoadCallback<Post> {
-            override fun onLoaded(entries: List<Post>) {
-                val entriesToShow = ArrayList<Post>(entries)
+        repository.getTrips(object : DataSource.LoadCallback<Trip> {
+            override fun onLoaded(entries: List<Trip>) {
+                val entriesToShow = ArrayList<Trip>(entries)
                 if (showLoadingUI) {
                     dataLoading.set(false)
                 }
                 mIsDataLoadingError.set(false)
-                posts.clear()
-                posts.addAll(entriesToShow)
-                empty.set(posts.isEmpty())
-                Log.i("TOMASZ", posts.count().toString())
+                trips.clear()
+                trips.addAll(entriesToShow)
+                empty.set(trips.isEmpty())
+                Log.i("TOMASZ", trips.count().toString())
             }
 
             override fun onDataNotAvailable() {

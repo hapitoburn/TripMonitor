@@ -26,5 +26,4 @@ object ListTypeConverter {
         fun someObjectListToString(someObjects: List<String>): String {
             return gson.toJson(someObjects)
         }
-
 }

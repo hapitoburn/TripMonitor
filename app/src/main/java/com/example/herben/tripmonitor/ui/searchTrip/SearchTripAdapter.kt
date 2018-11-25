@@ -1,31 +1,31 @@
-package com.example.herben.tripmonitor.ui.board
+package com.example.herben.tripmonitor.ui.searchTrip
 
-import android.databinding.BindingAdapter
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.example.herben.tripmonitor.data.Post
-import com.example.herben.tripmonitor.databinding.PostsListItemBinding
+import com.example.herben.tripmonitor.data.Trip
+import com.example.herben.tripmonitor.databinding.ItemSearchTripsBinding
+import kotlinx.android.synthetic.main.item_search_trips.view.*
 
-class BoardAdapter(/*private val mOnClickListener: ListItemClickListener?*/) : RecyclerView.Adapter<BoardAdapter.PostsViewHolder>() {
+class SearchTripAdapter  : RecyclerView.Adapter<SearchTripAdapter.PostsViewHolder>() {
 
-    private var posts: List<Post>? = null
+    private var trips: List<Trip>? = null
 
     interface ListItemClickListener {
-        fun onListItemClick(post: Post)
+        fun onListItemClick(trip: Trip)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostsViewHolder {
 
         val inflater = LayoutInflater.from(parent.context)
 
-        val view = PostsListItemBinding.inflate(inflater)
+        val view = ItemSearchTripsBinding.inflate(inflater)
 
         return PostsViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: PostsViewHolder, position: Int) {
-        val post = posts!![position]
+        val trip = trips?.get(position)
         /*
         val date = post.date
 
@@ -34,7 +34,7 @@ class BoardAdapter(/*private val mOnClickListener: ListItemClickListener?*/) : R
         val dateFormatted = formatterDate.format(date)
         val timeFormatted = formatterTime.format(date)*/
 
-        holder.bind(post)
+        holder.bind(trip)
 
         /*holder.itemView.setOnClickListener {
             mOnClickListener?.onListItemClick(post)
@@ -42,26 +42,19 @@ class BoardAdapter(/*private val mOnClickListener: ListItemClickListener?*/) : R
     }
 
     override fun getItemCount(): Int {
-        return if (this.posts != null) this.posts!!.size else 0
+        return if (this.trips != null) this.trips!!.size else 0
     }
 
-    inner class PostsViewHolder(val binding: PostsListItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class PostsViewHolder(val binding: ItemSearchTripsBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Post) {
+        fun bind(item: Trip?) {
             with(binding) {
-                title.text = item.title
-                editDate.text = item.date.toString()
-                //created.text = item.author
-                body.text = item.body
+                name.text = item?.name
+                dateFrom.text = item?.dateFrom.toString()
+                dateTo.text = item?.dateTo.toString()
             }
         }
-/*
-        init {
-            name = itemView.findViewById(R.id.name)
-            date = itemView.findViewById(R.id.edit_date)
-            time = itemView.findViewById(R.id.time)
-        }
-*/
+
         //        @Override
         //        public void onClick(View v) {
         //            int clickedPosition = getAdapterPosition();
@@ -69,12 +62,12 @@ class BoardAdapter(/*private val mOnClickListener: ListItemClickListener?*/) : R
         //        }
     }
 
-    fun replaceData(entries: List<Post>) {
+    fun replaceData(entries: List<Trip>) {
         setList(entries)
     }
 
-    private fun setList(entries: List<Post>) {
-        posts = entries
+    private fun setList(entries: List<Trip>) {
+        trips = entries
         notifyDataSetChanged()
     }
 }

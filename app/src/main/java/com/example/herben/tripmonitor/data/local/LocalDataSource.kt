@@ -17,15 +17,26 @@ private constructor(private val appExecutors: AppExecutors,
     }
 
     override fun getTrips(callback: DataSource.LoadCallback<Trip>) {
+        val runnable = Runnable {
+            val entryList = trips.getTrips()
+            appExecutors.mainThread().execute {
+                if (entryList.isEmpty()) {
+                    callback.onDataNotAvailable()
+                } else {
+                    callback.onLoaded(entryList)
+                }
+            }
+        }
+        appExecutors.diskIO().execute(runnable)
     }
 
     override fun deleteTrip(entryId: String) {
     }
 
-    override fun refreshTrips() {
-    }
-
     override fun saveTrip(trip: Trip) {
+        checkNotNull(trip)
+        val runnable = Runnable { trips.insert(trip) }
+        appExecutors.diskIO().execute(runnable)
     }
 
     override fun getPosts(callback: DataSource.LoadCallback<Post>) {
@@ -74,6 +85,9 @@ private constructor(private val appExecutors: AppExecutors,
         // entries from all the available data sources.
         // todo:setup repository to get from local or remote depending on the needs
 
+    }
+
+    override fun refreshTrips() {
     }
 
     override fun deleteAllPosts() {

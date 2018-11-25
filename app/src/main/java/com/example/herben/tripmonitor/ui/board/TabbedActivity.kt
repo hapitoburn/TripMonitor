@@ -1,7 +1,9 @@
 package com.example.herben.tripmonitor.ui.board
 
 import android.arch.lifecycle.Observer
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.support.design.widget.TabLayout
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -15,9 +17,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import com.example.herben.tripmonitor.MainActivity
 import com.example.herben.tripmonitor.R
 import com.example.herben.tripmonitor.ui.addPost.AddEditPostActivity
 import com.example.herben.tripmonitor.ui.addTrip.AddEditTripActivity
+import com.example.herben.tripmonitor.ui.searchTrip.SearchTripFragment
 import com.example.herben.tripmonitor.ui.trip.TripOverwiewFragment
 
 import kotlinx.android.synthetic.main.activity_tabbed.*
@@ -34,6 +38,8 @@ class TabbedActivity : AppCompatActivity() {
      * [android.support.v4.app.FragmentStatePagerAdapter].
      */
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
+    private var prefs: SharedPreferences? = null
+    private val TRIP_ID = "TripId"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +60,8 @@ class TabbedActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }
+
+        setUpSharedPreferences()
 
         val mViewModel = BoardViewModel.obtain(this)
 
@@ -90,6 +98,10 @@ class TabbedActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    private fun setUpSharedPreferences() {
+        val applicationContext = MainActivity.getContextOfApplication()
+        prefs = applicationContext.getSharedPreferences(TRIP_ID, Context.MODE_PRIVATE)
+    }
 
     /**
      * A [FragmentPagerAdapter] that returns a fragment corresponding to
@@ -100,7 +112,15 @@ class TabbedActivity : AppCompatActivity() {
         override fun getItem(position: Int): Fragment {
             return when(position){
                 1 -> BoardFragment()
-                2 -> TripOverwiewFragment()
+                2 -> {
+                    val id : String? = prefs!!.getString(TRIP_ID, "")
+                    if(id.isNullOrEmpty()) {
+                        SearchTripFragment.newInstance()
+                    }
+                    else {
+                        TripOverwiewFragment.newInstance(id!!)
+                    }
+                }
                 else -> PlaceholderFragment.newInstance(position + 1)
             }
         }

@@ -34,7 +34,7 @@ class SearchTripFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
-        return binding?.root
+        return binding!!.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -53,7 +53,7 @@ class SearchTripFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        entriesList = view.findViewById(R.id.posts_list)
+        entriesList = view.findViewById(R.id.item_search_trips)
 
         val layoutManager = LinearLayoutManager(context)
 

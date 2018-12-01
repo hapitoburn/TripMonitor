@@ -28,7 +28,7 @@ class AddEditTripActivity : AppCompatActivity() {
     private fun subscribeToNavigationChanges() {
         val viewModel = AddEditTripViewModel.obtain(this)
         // The activity observes the navigation events in the ViewModel
-        viewModel.postUpdatedEvent.observe(this, Observer { this@AddEditTripActivity.onEntrySaved() })
+        viewModel.tripUpdatedEvent.observe(this, Observer { this@AddEditTripActivity.onEntrySaved() })
     }
     private fun obtainViewFragment(): AddEditTripFragment {
         // View Fragment

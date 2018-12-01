@@ -25,7 +25,7 @@ class AddEditTripViewModel : ViewModel(), DataSource.GetCallback<Trip>{
 
     internal val snackbarMessage = SnackbarMessage()
 
-    internal val postUpdatedEvent: SingleLiveEvent<Void> = SingleLiveEvent()
+    internal val tripUpdatedEvent: SingleLiveEvent<Void> = SingleLiveEvent()
 
     private var mEntryId: String? = null
 
@@ -94,7 +94,7 @@ class AddEditTripViewModel : ViewModel(), DataSource.GetCallback<Trip>{
 
     private fun createTrip(trip: Trip) {
         repository.saveTrip(trip)
-        postUpdatedEvent.call()
+        tripUpdatedEvent.call()
     }
 
     private fun updateTrip(trip: Trip) {
@@ -102,6 +102,6 @@ class AddEditTripViewModel : ViewModel(), DataSource.GetCallback<Trip>{
             throw RuntimeException("updateTask() was called but task is new.")
         }
         repository.saveTrip(trip)
-        postUpdatedEvent.call()
+        tripUpdatedEvent.call()
     }
 }

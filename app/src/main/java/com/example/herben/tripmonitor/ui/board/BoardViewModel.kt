@@ -48,9 +48,6 @@ class BoardViewModel
 
     val entriesAddViewVisible = ObservableBoolean()
 
-    @SuppressLint("StaticFieldLeak")
-    private var mContext: Context = context.applicationContext // To avoid leaks, this must be an Application Context.
-
     private lateinit var repository: Repository
 
     fun start() {

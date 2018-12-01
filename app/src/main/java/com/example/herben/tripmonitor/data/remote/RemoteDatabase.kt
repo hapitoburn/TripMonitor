@@ -2,6 +2,7 @@ package com.example.herben.tripmonitor.data.remote
 
 import android.util.Log
 import com.example.herben.tripmonitor.data.Post
+import com.example.herben.tripmonitor.data.Trip
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -10,6 +11,20 @@ import com.google.firebase.database.ValueEventListener
 
 
 class RemoteDatabase : FirebaseProvider{
+    override fun getAllTrips(): List<Trip> {
+      //  TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return ArrayList<Trip>()
+    }
+
+    override fun getTripById(entryId: String): Trip? {
+      //  TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return Trip()
+    }
+
+    override fun insertTrip(entry: Trip) {
+       // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     private val databaseReference = FirebaseDatabase.getInstance().reference
     private var postEntry: Post? = null
     private var postEntries: MutableList<Post> = mutableListOf()

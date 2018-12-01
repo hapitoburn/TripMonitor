@@ -6,6 +6,7 @@ import android.support.annotation.StringRes
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,7 +40,7 @@ class AddEditTripFragment : Fragment() {
         setHasOptionsMenu(true)
         retainInstance = false
 
-        return dataBinding!!.getRoot()
+        return dataBinding!!.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -73,6 +74,7 @@ class AddEditTripFragment : Fragment() {
     private fun setupFab() {
         val fab : FloatingActionButton? = activity?.findViewById(R.id.fab_edit_task_done)
         //fab.setImageResource(R.drawable.ic_done)
+        Log.i("TOMASZ", "Add edit trip setup fab")
         fab?.setOnClickListener { viewModel.saveEntry() }
     }
 

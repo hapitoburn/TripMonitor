@@ -26,4 +26,6 @@
     <string name="date_from">date from</string>
     <string name="date_to">date to</string>
     <string name="edit_trip">edit trip</string>
+    <string name="logout">logout</string>
+    <string name="title_activity_auth">AuthActivity</string>
 </resources>

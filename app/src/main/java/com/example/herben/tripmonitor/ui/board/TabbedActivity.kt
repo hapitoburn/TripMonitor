@@ -12,17 +12,19 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import com.example.herben.tripmonitor.MainActivity
+import com.example.herben.tripmonitor.AuthActivity
 import com.example.herben.tripmonitor.R
 import com.example.herben.tripmonitor.ui.addPost.AddEditPostActivity
 import com.example.herben.tripmonitor.ui.addTrip.AddEditTripActivity
 import com.example.herben.tripmonitor.ui.searchTrip.SearchTripFragment
 import com.example.herben.tripmonitor.ui.trip.TripOverwiewFragment
+import com.google.firebase.auth.FirebaseAuth
 
 import kotlinx.android.synthetic.main.activity_tabbed.*
 import kotlinx.android.synthetic.main.fragment_tabbed.view.*
@@ -43,6 +45,7 @@ class TabbedActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_tabbed)
 
         setSupportActionBar(toolbar)
@@ -65,15 +68,16 @@ class TabbedActivity : AppCompatActivity() {
 
         val mViewModel = BoardViewModel.obtain(this)
 
-        mViewModel.getNewEntryEvent().observe(this, Observer<Void> { addNewPost() })
+        mViewModel.getNewEntryEvent().observe(this, Observer { this@TabbedActivity.addNewPost() })
+        Log.i("TOMASZ", "dodano tutaj observera")
 
     }
 
     private fun addNewPost() {
         val intent = Intent(this, AddEditPostActivity::class.java)
+        Log.i("TOMASZ", "dodaj nowy post")
         startActivityForResult(intent, AddEditPostActivity.REQUEST_CODE)
     }
-
 
     private fun addNewTrip() {
         val intent = Intent(this, AddEditTripActivity::class.java)
@@ -95,11 +99,19 @@ class TabbedActivity : AppCompatActivity() {
             return true
         }
 
+        if (id == R.id.logout) {
+            logout()
+            return true
+        }
+
         return super.onOptionsItemSelected(item)
     }
 
+    private fun logout() {
+        FirebaseAuth.getInstance().signOut()
+    }
+
     private fun setUpSharedPreferences() {
-        val applicationContext = MainActivity.getContextOfApplication()
         prefs = applicationContext.getSharedPreferences(TRIP_ID, Context.MODE_PRIVATE)
     }
 
@@ -111,7 +123,7 @@ class TabbedActivity : AppCompatActivity() {
 
         override fun getItem(position: Int): Fragment {
             return when(position){
-                1 -> BoardFragment()
+                1 -> BoardFragment.newInstance()
                 2 -> {
                     val id : String? = prefs!!.getString(TRIP_ID, "")
                     if(id.isNullOrEmpty()) {

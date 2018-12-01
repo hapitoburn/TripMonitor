@@ -5,12 +5,19 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.*
 import com.example.herben.tripmonitor.R
 import com.example.herben.tripmonitor.databinding.FragmentPostsBinding;
 
+
 class BoardFragment : Fragment()/*, BoardAdapter.ListItemClickListener*/ {
 
+    companion object {
+        fun newInstance() : BoardFragment {
+            return BoardFragment()
+        }
+    }
     private var board: BoardViewModel? = null
     private var binding: FragmentPostsBinding? = null
 
@@ -49,6 +56,7 @@ class BoardFragment : Fragment()/*, BoardAdapter.ListItemClickListener*/ {
         //entriesList.addItemDecoration(SimpleDividerItemDecoration(context))
 
         entriesList!!.adapter = adapter
+        Log.i("TOMASZ", "BOARD created")
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -60,18 +68,18 @@ class BoardFragment : Fragment()/*, BoardAdapter.ListItemClickListener*/ {
 
 
     private fun setupFab() {
+        if(activity == null)
+            return
         val fab = activity!!.findViewById(R.id.fab_action_add) as FloatingActionButton
+        Log.i("TOMASZ", "Setup fab "+  board.toString())
         fab.setOnClickListener { board?.addNewEntry() }
     }
 
 
-    /*override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item!!.itemId) {
-            R.id.menu_logout -> signout()
-        }
-        return true
-    }*/
-
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        setupFab()
+    }
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 

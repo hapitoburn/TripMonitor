@@ -15,19 +15,32 @@ import android.util.Log
 import com.google.firebase.FirebaseApp
 
 
-class MainActivity : AppCompatActivity() {
+class AuthActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         instance = this
 
         FirebaseApp.initializeApp(this);
-        setContentView(R.layout.activity_main)
-        if(FirebaseAuth.getInstance().currentUser == null)
+        setContentView(R.layout.activity_auth)
+        if(FirebaseAuth.getInstance().currentUser == null) {
             singIn()
-        //else
-        startTabbedActivity()
+        }
+        else {
+            startTabbedActivity()
+        }
+    }
 
+    override fun onResume() {
+        super.onResume()
+        FirebaseApp.initializeApp(this);
+        setContentView(R.layout.activity_auth)
+        if(FirebaseAuth.getInstance().currentUser == null) {
+            singIn()
+        }
+        else {
+            startTabbedActivity()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -37,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == RC_SIGN_IN) {
             val response = IdpResponse.fromResultIntent(data)
 
-            if (resultCode == RESULT_OK) {
+            if (resultCode == RESULT_OK && FirebaseAuth.getInstance().currentUser != null) {
                 Log.i("TOMASZ","Sign in")
                 startTabbedActivity()
             } else {
@@ -66,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         val providers = Arrays.asList<AuthUI.IdpConfig>(
                 AuthUI.IdpConfig.EmailBuilder().build(),
                 AuthUI.IdpConfig.PhoneBuilder().build(),
-                //AuthUI.IdpConfig.GoogleBuilder().build(),
+                AuthUI.IdpConfig.GoogleBuilder().build(),
                 AuthUI.IdpConfig.FacebookBuilder().build())
 
         // Create and launch sign-in intent
@@ -85,7 +98,7 @@ class MainActivity : AppCompatActivity() {
             return instance.applicationContext
         }
 
-        lateinit var instance: MainActivity private set
+        lateinit var instance: AuthActivity private set
     }
 
 

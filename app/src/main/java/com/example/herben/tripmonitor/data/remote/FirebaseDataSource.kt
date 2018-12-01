@@ -3,7 +3,7 @@ package com.example.herben.tripmonitor.data.remote
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Handler
-import com.example.herben.tripmonitor.MainActivity
+import com.example.herben.tripmonitor.AuthActivity
 import com.example.herben.tripmonitor.common.AppExecutors
 import com.example.herben.tripmonitor.data.Post
 import com.example.herben.tripmonitor.data.DataSource
@@ -106,7 +106,7 @@ class FirebaseDataSource private constructor(private var appExecutors: AppExecut
     }
 
     private fun setUpSharedPreferences() {
-        val applicationContext = MainActivity.getContextOfApplication()
+        val applicationContext = AuthActivity.getContextOfApplication()
         val MY_PREFS_NAME = "UserUid"
         prefs = applicationContext.getSharedPreferences(MY_PREFS_NAME, Context.MODE_PRIVATE)
     }

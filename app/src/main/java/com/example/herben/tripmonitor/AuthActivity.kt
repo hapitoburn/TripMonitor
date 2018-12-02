@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.annotation.NonNull
+import android.support.design.widget.Snackbar
 import com.example.herben.tripmonitor.ui.board.TabbedActivity
 
 import com.firebase.ui.auth.AuthUI
@@ -12,17 +14,22 @@ import com.google.firebase.auth.FirebaseAuth
 
 import java.util.Arrays
 import android.util.Log
+import android.widget.Toast
+import com.example.herben.tripmonitor.common.Utils
+import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
 
 
 class AuthActivity : AppCompatActivity() {
+    val TAG : String = "TOMASZ"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         instance = this
-
-        FirebaseApp.initializeApp(this);
         setContentView(R.layout.activity_auth)
+
+        FirebaseApp.initializeApp(this)
+
         if(FirebaseAuth.getInstance().currentUser == null) {
             singIn()
         }
@@ -33,32 +40,22 @@ class AuthActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        FirebaseApp.initializeApp(this);
-        setContentView(R.layout.activity_auth)
         if(FirebaseAuth.getInstance().currentUser == null) {
             singIn()
-        }
-        else {
-            startTabbedActivity()
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == RC_SIGN_IN) {
             val response = IdpResponse.fromResultIntent(data)
 
             if (resultCode == RESULT_OK && FirebaseAuth.getInstance().currentUser != null) {
-                Log.i("TOMASZ","Sign in")
                 startTabbedActivity()
             } else {
-                Log.i("TOMASZ","Sign in failed")
-                // Sign in failed. If response is null the user canceled the
-                // sign-in flow using the back button. Otherwise check
-                // response.getError().getErrorCode() and handle the error.
-                // ...
+                Toast.makeText(this,
+                        "Sign in failed", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -87,9 +84,9 @@ class AuthActivity : AppCompatActivity() {
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
                         .setAvailableProviders(providers)
+                        .setIsSmartLockEnabled(false, true)
                         .build(),
                 RC_SIGN_IN)
-
     }
 
     companion object {
@@ -97,19 +94,6 @@ class AuthActivity : AppCompatActivity() {
         fun getContextOfApplication(): Context {
             return instance.applicationContext
         }
-
         lateinit var instance: AuthActivity private set
     }
-
-
-    /*
-    private void singOut(){
-        AuthUI.getInstance()
-                .signOut(this)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // ...
-                    }
-                });
-    }*/
 }

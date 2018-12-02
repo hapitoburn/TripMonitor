@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.os.Bundle
+import android.support.annotation.NonNull
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -24,7 +25,12 @@ import com.example.herben.tripmonitor.ui.addPost.AddEditPostActivity
 import com.example.herben.tripmonitor.ui.addTrip.AddEditTripActivity
 import com.example.herben.tripmonitor.ui.searchTrip.SearchTripFragment
 import com.example.herben.tripmonitor.ui.trip.TripOverwiewFragment
+import com.firebase.ui.auth.AuthUI
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 import kotlinx.android.synthetic.main.activity_tabbed.*
 import kotlinx.android.synthetic.main.fragment_tabbed.view.*
@@ -42,6 +48,7 @@ class TabbedActivity : AppCompatActivity() {
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
     private var prefs: SharedPreferences? = null
     private val TRIP_ID = "TripId"
+    private lateinit var mAuthListener : FirebaseAuth.AuthStateListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,9 +77,7 @@ class TabbedActivity : AppCompatActivity() {
 
         mViewModel.getNewEntryEvent().observe(this, Observer { this@TabbedActivity.addNewPost() })
         Log.i("TOMASZ", "dodano tutaj observera")
-
     }
-
     private fun addNewPost() {
         val intent = Intent(this, AddEditPostActivity::class.java)
         Log.i("TOMASZ", "dodaj nowy post")
@@ -108,7 +113,14 @@ class TabbedActivity : AppCompatActivity() {
     }
 
     private fun logout() {
-        FirebaseAuth.getInstance().signOut()
+        Log.i("TOMASZ", "trying to log out")
+       // AuthActivity.singOut(this)
+        AuthUI.getInstance()
+                .signOut(this)
+                .addOnCompleteListener {
+                    Log.i("TOMASZ", "completed")
+                    finish()
+                }
     }
 
     private fun setUpSharedPreferences() {

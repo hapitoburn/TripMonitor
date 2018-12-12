@@ -25,6 +25,7 @@ import com.example.herben.tripmonitor.ui.addPost.AddEditPostActivity
 import com.example.herben.tripmonitor.ui.addTrip.AddEditTripActivity
 import com.example.herben.tripmonitor.ui.searchTrip.SearchTripFragment
 import com.example.herben.tripmonitor.ui.trip.TripOverwiewFragment
+import com.example.herben.tripmonitor.ui.user.AddUserDetailsFragment
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
@@ -49,11 +50,20 @@ class TabbedActivity : AppCompatActivity() {
     private var prefs: SharedPreferences? = null
     private val TRIP_ID = "TripId"
     private lateinit var mAuthListener : FirebaseAuth.AuthStateListener
+    private var isUserNew = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //TODO check if above is safe
         setContentView(R.layout.activity_tabbed)
+
+        isUserNew = intent.getBooleanExtra(AuthActivity.NEW_USER, false)
+        if(isUserNew)
+        {
+            val activity = Intent(this.applicationContext, AddUserDetailsFragment::class.java)
+            startActivity(activity)
+        }
 
         setSupportActionBar(toolbar)
         // Create the adapter that will return a fragment for each of the three
@@ -62,6 +72,7 @@ class TabbedActivity : AppCompatActivity() {
 
         // Set up the ViewPager with the sections adapter.
         container.adapter = mSectionsPagerAdapter
+
 
         container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
         tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(container))
@@ -76,7 +87,8 @@ class TabbedActivity : AppCompatActivity() {
         val mViewModel = BoardViewModel.obtain(this)
 
         mViewModel.getNewEntryEvent().observe(this, Observer { this@TabbedActivity.addNewPost() })
-        Log.i("TOMASZ", "dodano tutaj observera")
+
+
     }
     private fun addNewPost() {
         val intent = Intent(this, AddEditPostActivity::class.java)
@@ -124,7 +136,7 @@ class TabbedActivity : AppCompatActivity() {
     }
 
     private fun setUpSharedPreferences() {
-        prefs = applicationContext.getSharedPreferences(TRIP_ID, Context.MODE_PRIVATE)
+        prefs = applicationContext.getSharedPreferences(AuthActivity.USER_UID, Context.MODE_PRIVATE)
     }
 
     /**

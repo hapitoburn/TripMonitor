@@ -1,36 +1,92 @@
 package com.example.herben.tripmonitor.data
 
+import com.example.herben.tripmonitor.AuthActivity
 import com.example.herben.tripmonitor.data.DataSource.GetCallback
 import com.example.herben.tripmonitor.data.DataSource.LoadCallback
-import com.example.herben.tripmonitor.ui.addTrip.AddEditTripViewModel
 import java.util.*
 
 
 class Repository private constructor(private val remoteDataSource: DataSource,
                                      private val localDataSource: DataSource) : DataSource {
-    override fun getTrip(entryId: String, callback: GetCallback<Trip>) {
-
+    override fun insertUser(userId: String) {
+        remoteDataSource.insertUser(userId)
+        localDataSource.insertUser(userId)
+        user = User("", "", "", userId)
     }
 
-    override fun getTrips(callback: LoadCallback<Trip>) {
-        getTripsFromRemoteDataSource(callback)
-    }
+    override fun updateUser(name: String, phoneNumber: String, userId: String) {
+        remoteDataSource.updateUser(name, phoneNumber, userId)
+        localDataSource.updateUser(name, phoneNumber, userId)
 
-    override fun deleteTrip(entryId: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun refreshTrips() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun saveTrip(trip: Trip) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val uid = AuthActivity.getUserUid()
+        uid?.let {
+            getUser(it, callback = object : DataSource.GetCallback<User> {
+                override fun onDataNotAvailable() {
+                }
+                override fun onLoaded(entity: User?) {
+                    user = entity
+                }
+            })
+        }
     }
 
     internal var mCachedTasks: MutableMap<String, Post> = LinkedHashMap()
-
+    internal var mTrip: Trip? = null
+    internal var user: User? = null
     private var mCacheIsDirty = true
+
+    override fun updateActiveTripInfo(userId: String, tripId: String) {
+        remoteDataSource.updateActiveTripInfo(userId, tripId)
+        localDataSource.updateActiveTripInfo(userId, tripId)
+
+        getTrip(tripId, callback = object : DataSource.GetCallback<Trip> {
+            override fun onDataNotAvailable() {
+            }
+            override fun onLoaded(entity: Trip?) {
+                mTrip = entity
+            }
+        })
+    }
+
+    override fun getActiveTrip(userId: String, callback: GetCallback<Trip>) {
+        checkNotNull(userId)
+        checkNotNull(callback)
+
+        // Respond immediately with cache if available
+        if (mTrip != null) {
+            callback.onLoaded(mTrip)
+            return
+        }
+
+        // Load from server/persisted if needed.
+        // Is the task in the local data source? If not, query the network.
+        localDataSource.getActiveTrip(userId, object : GetCallback<Trip> {
+            override fun onLoaded(entity: Trip?) {
+
+                mTrip = entity
+                callback.onLoaded(entity)
+            }
+
+            override fun onDataNotAvailable() {
+
+                remoteDataSource.getActiveTrip(userId, object : GetCallback<Trip> {
+                    override fun onLoaded(entity: Trip?) {
+                        if (entity == null) {
+                            onDataNotAvailable()
+                            return
+                        }
+
+                        mTrip = entity
+                        callback.onLoaded(entity)
+                    }
+
+                    override fun onDataNotAvailable() {
+                        callback.onDataNotAvailable()
+                    }
+                })
+            }
+        })
+    }
 
 
     override fun getPosts(callback: LoadCallback<Post>) {
@@ -126,12 +182,25 @@ class Repository private constructor(private val remoteDataSource: DataSource,
         mCachedTasks.remove(entryId)
     }
 
+
     private fun getEntriesFromRemoteDataSource(callback: LoadCallback<Post>) {
         remoteDataSource.getPosts(object : LoadCallback<Post> {
             override fun onLoaded(entries: List<Post>) {
                 refreshCache(entries)
                 refreshLocalDataSource(entries)
                 callback.onLoaded(ArrayList<Post>(mCachedTasks.values))
+            }
+
+            override fun onDataNotAvailable() {
+                callback.onDataNotAvailable()
+            }
+        })
+    }
+
+    private fun getUsersFromRemoteDataSource(callback: LoadCallback<User>) {
+        remoteDataSource.getUsers(object : LoadCallback<User> {
+            override fun onLoaded(entries: List<User>) {
+                callback.onLoaded(entries)
             }
 
             override fun onDataNotAvailable() {
@@ -150,6 +219,96 @@ class Repository private constructor(private val remoteDataSource: DataSource,
                 callback.onDataNotAvailable()
             }
         })
+    }
+
+    override fun getUser(entryId: String, callback: GetCallback<User>) {
+        checkNotNull(entryId)
+        checkNotNull(callback)
+
+        localDataSource.getUser(entryId, object : GetCallback<User> {
+            override fun onLoaded(entity: User?) {
+                callback.onLoaded(entity)
+            }
+
+            override fun onDataNotAvailable() {
+
+                remoteDataSource.getUser(entryId, object : GetCallback<User> {
+                    override fun onLoaded(entity: User?) {
+                        if (entity == null) {
+                            onDataNotAvailable()
+                            return
+                        }
+                        callback.onLoaded(entity)
+                    }
+
+                    override fun onDataNotAvailable() {
+                        callback.onDataNotAvailable()
+                    }
+                })
+            }
+        })
+    }
+
+    override fun getUsers(callback: LoadCallback<User>) {
+        getUsersFromRemoteDataSource(callback)
+    }
+
+    override fun getTrip(entryId: String, callback: GetCallback<Trip>) {
+        checkNotNull(entryId)
+        checkNotNull(callback)
+
+        val cached = mTrip
+
+        // Respond immediately with cache if available
+        if (cached != null) {
+            callback.onLoaded(cached)
+            return
+        }
+
+        // Load from server/persisted if needed.
+        // Is the task in the local data source? If not, query the network.
+        localDataSource.getTrip(entryId, object : GetCallback<Trip> {
+            override fun onLoaded(entity : Trip?) {
+
+                mTrip = entity
+                callback.onLoaded(entity)
+            }
+
+            override fun onDataNotAvailable() {
+
+                remoteDataSource.getTrip(entryId, object : GetCallback<Trip> {
+                    override fun onLoaded(entity: Trip?) {
+                        if (entity == null) {
+                            onDataNotAvailable()
+                            return
+                        }
+
+                        mTrip = entity
+                        callback.onLoaded(entity)
+                    }
+
+                    override fun onDataNotAvailable() {
+                        callback.onDataNotAvailable()
+                    }
+                })
+            }
+        })
+    }
+
+    override fun getTrips(callback: LoadCallback<Trip>) {
+        getTripsFromRemoteDataSource(callback)
+    }
+
+    override fun deleteTrip(entryId: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun refreshTrips() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun saveTrip(trip: Trip) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private fun refreshCache(entries: List<Post>) {

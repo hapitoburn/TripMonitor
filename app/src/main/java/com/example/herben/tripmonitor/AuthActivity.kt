@@ -2,6 +2,7 @@ package com.example.herben.tripmonitor
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.annotation.NonNull
@@ -15,7 +16,9 @@ import com.google.firebase.auth.FirebaseAuth
 import java.util.Arrays
 import android.util.Log
 import android.widget.Toast
+import com.example.herben.tripmonitor.common.Injection
 import com.example.herben.tripmonitor.common.Utils
+import com.example.herben.tripmonitor.data.User
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
 
@@ -34,7 +37,7 @@ class AuthActivity : AppCompatActivity() {
             singIn()
         }
         else {
-            startTabbedActivity()
+            startTabbedActivity(false)
         }
     }
 
@@ -50,9 +53,8 @@ class AuthActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
             val response = IdpResponse.fromResultIntent(data)
-
-            if (resultCode == RESULT_OK && FirebaseAuth.getInstance().currentUser != null) {
-                startTabbedActivity()
+            if (resultCode == RESULT_OK) {
+                startTabbedActivity(response?.isNewUser)
             } else {
                 Toast.makeText(this,
                         "Sign in failed", Toast.LENGTH_LONG).show();
@@ -60,15 +62,18 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
-    private fun startTabbedActivity() {
-        val MY_PREFS_NAME = "UserUid"
+    private fun startTabbedActivity(isNewUser : Boolean?) {
         val userUid = FirebaseAuth.getInstance().currentUser?.uid
+        val postRepository = Injection.provideRepository(applicationContext)
+        if(isNewUser == true)
+            postRepository.insertUser(User().id)
 
-        val editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit()
-        editor.putString("UserUid", userUid)
+        val editor = getSharedPreferences(USER_UID, MODE_PRIVATE).edit()
+        editor.putString(USER_UID, userUid)
         editor.apply()
 
         val startTabbedActivity = Intent(this.applicationContext, TabbedActivity::class.java)
+        intent.putExtra(NEW_USER, isNewUser ?: false)
         startActivity(startTabbedActivity)
     }
     private fun singIn() {
@@ -91,9 +96,16 @@ class AuthActivity : AppCompatActivity() {
 
     companion object {
         private const val RC_SIGN_IN = 100
+        const val USER_UID = "UserUid"
+        const val NEW_USER = "IsUserNew"
         fun getContextOfApplication(): Context {
             return instance.applicationContext
         }
+        fun  getUserUid(): String? {
+            return getContextOfApplication().
+                    getSharedPreferences(USER_UID, MODE_PRIVATE).getString(USER_UID, "")
+        }
+
         lateinit var instance: AuthActivity private set
     }
 }

@@ -14,6 +14,9 @@ interface TripDao {
     @Query("SELECT * FROM trips WHERE id = :tripId")
     fun getTripById(tripId: String): Trip?
 
+    @Query("SELECT * FROM trips WHERE id=(SELECT trip FROM users WHERE id =:userId)")
+    fun getActiveTrip(userId : String): Trip?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(trip: Trip)
 

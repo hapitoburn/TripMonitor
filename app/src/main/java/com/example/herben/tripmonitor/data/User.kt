@@ -8,7 +8,7 @@ import java.util.*
 
 @Entity(tableName = "users")
 data class User(@ColumnInfo(name = "name") var name: String = "",
-                @ColumnInfo(name = "lastName") var lastName: String = "",
                 @ColumnInfo(name = "phoneNumber") var phoneNumber: String = "",
+                @ColumnInfo(name = "trip") var trip: String = "",
                 @PrimaryKey @NonNull var id : String = UUID.randomUUID().toString()
 )

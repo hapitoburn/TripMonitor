@@ -8,8 +8,9 @@ import android.content.Context
 import com.example.herben.tripmonitor.common.DateConverter
 import com.example.herben.tripmonitor.data.Post
 import com.example.herben.tripmonitor.data.Trip
+import com.example.herben.tripmonitor.data.User
 
-@Database(entities = arrayOf(Post::class, Trip::class), version = 4)
+@Database(entities = arrayOf(Post::class, Trip::class, User::class), version = 6)
 @TypeConverters(DateConverter::class)
 abstract class LocalDatabase : RoomDatabase() {
 

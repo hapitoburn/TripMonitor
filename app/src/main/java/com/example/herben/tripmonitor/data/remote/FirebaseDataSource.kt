@@ -8,10 +8,71 @@ import com.example.herben.tripmonitor.common.AppExecutors
 import com.example.herben.tripmonitor.data.Post
 import com.example.herben.tripmonitor.data.DataSource
 import com.example.herben.tripmonitor.data.Trip
+import com.example.herben.tripmonitor.data.User
 import com.google.firebase.auth.FirebaseAuth
 
 class FirebaseDataSource private constructor(private var appExecutors: AppExecutors, private var provider: FirebaseProvider) : DataSource {
+    override fun updateUser(name: String, phoneNumber: String, userId: String) {
+        val runnable = Runnable { provider.updateUserInfo(name, phoneNumber, userId) }
+        appExecutors.networkIO().execute(runnable)
+    }
+
+    override fun insertUser(userId: String) {
+        val runnable = Runnable { provider.insertUser(userId) }
+        appExecutors.networkIO().execute(runnable)
+    }
+
+    override fun updateActiveTripInfo(userId: String, tripId: String) {
+        val runnable = Runnable { provider.updateActiveTrip(userId, tripId) }
+        appExecutors.networkIO().execute(runnable)
+    }
+
+    override fun getActiveTrip(userId: String, callback: DataSource.GetCallback<Trip>) {
+        val runnable = Runnable {
+            val entry = provider.getActiveTrip(userId)
+            appExecutors.mainThread().execute {
+                if (entry != null) {
+                    callback.onLoaded(entry)
+                } else {
+                    callback.onDataNotAvailable()
+                }
+            }
+        }
+        appExecutors.networkIO().execute(runnable)
+    }
+
+    override fun getUser(entryId: String, callback: DataSource.GetCallback<User>) {
+        val runnable = Runnable {
+            val entry = provider.getUserById(entryId)
+            appExecutors.mainThread().execute {
+                if (entry != null) {
+                    callback.onLoaded(entry)
+                } else {
+                    callback.onDataNotAvailable()
+                }
+            }
+        }
+        appExecutors.networkIO().execute(runnable)
+    }
+
+    override fun getUsers(callback: DataSource.LoadCallback<User>) {
+        val entryList = provider.getAllUsers()
+        val handler = Handler()
+        handler.postDelayed({ callback.onLoaded(entryList) }, SERVICE_LATENCY_MS)
+    }
+
     override fun getTrip(entryId: String, callback: DataSource.GetCallback<Trip>) {
+        val runnable = Runnable {
+            val entry = provider.getTripById(entryId)
+            appExecutors.mainThread().execute {
+                if (entry != null) {
+                    callback.onLoaded(entry)
+                } else {
+                    callback.onDataNotAvailable()
+                }
+            }
+        }
+        appExecutors.networkIO().execute(runnable)
     }
 
     override fun deleteTrip(entryId: String) {

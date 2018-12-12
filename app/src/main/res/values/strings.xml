@@ -28,4 +28,7 @@
     <string name="edit_trip">edit trip</string>
     <string name="logout">logout</string>
     <string name="title_activity_auth">AuthActivity</string>
+    <string name="edit_user">Edit User</string>
+    <string name="empty_user_message">User fields are empty</string>
+    <string name="phone_number">111222333</string>
 </resources>

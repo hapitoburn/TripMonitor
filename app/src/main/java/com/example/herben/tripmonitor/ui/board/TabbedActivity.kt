@@ -13,6 +13,9 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.os.Bundle
 import android.support.annotation.NonNull
+import android.support.design.widget.NavigationView
+import android.support.v4.view.GravityCompat
+import android.support.v7.app.ActionBarDrawerToggle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -25,6 +28,7 @@ import com.example.herben.tripmonitor.ui.addPost.AddEditPostActivity
 import com.example.herben.tripmonitor.ui.addTrip.AddEditTripActivity
 import com.example.herben.tripmonitor.ui.searchTrip.SearchTripFragment
 import com.example.herben.tripmonitor.ui.trip.TripOverwiewFragment
+import com.example.herben.tripmonitor.ui.user.AddUserDetailsActivity
 import com.example.herben.tripmonitor.ui.user.AddUserDetailsFragment
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.tasks.OnCompleteListener
@@ -36,7 +40,7 @@ import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_tabbed.*
 import kotlinx.android.synthetic.main.fragment_tabbed.view.*
 
-class TabbedActivity : AppCompatActivity() {
+class TabbedActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     /**
      * The [android.support.v4.view.PagerAdapter] that will provide
@@ -50,20 +54,12 @@ class TabbedActivity : AppCompatActivity() {
     private var prefs: SharedPreferences? = null
     private val TRIP_ID = "TripId"
     private lateinit var mAuthListener : FirebaseAuth.AuthStateListener
-    private var isUserNew = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         //TODO check if above is safe
         setContentView(R.layout.activity_tabbed)
-
-        isUserNew = intent.getBooleanExtra(AuthActivity.NEW_USER, false)
-        if(isUserNew)
-        {
-            val activity = Intent(this.applicationContext, AddUserDetailsFragment::class.java)
-            startActivity(activity)
-        }
 
         setSupportActionBar(toolbar)
         // Create the adapter that will return a fragment for each of the three
@@ -89,7 +85,46 @@ class TabbedActivity : AppCompatActivity() {
         mViewModel.getNewEntryEvent().observe(this, Observer { this@TabbedActivity.addNewPost() })
 
 
+        // Initialize the action bar drawer toggle instance
+        val drawerToggle:ActionBarDrawerToggle = object : ActionBarDrawerToggle(
+                this,
+                drawer_layout,
+                toolbar,
+                R.string.drawer_open,
+                R.string.drawer_close
+        ){
+
+        }
+
+        // Configure the drawer layout to add listener and show icon on toolbar
+        drawerToggle.isDrawerIndicatorEnabled = true
+        drawer_layout.addDrawerListener(drawerToggle)
+        drawerToggle.syncState()
+
+
+        // Set navigation view navigation item selected listener
+        navigation.setNavigationItemSelectedListener{
+            when (it.itemId) {
+
+                R.id.update_profile -> {
+                    val activity = Intent(this.applicationContext, AddUserDetailsActivity::class.java)
+                    startActivity(activity)
+                }
+                R.id.contact -> {
+
+                }
+                R.id.alarms -> {
+
+                }
+            }
+            // Close the drawer
+            drawer_layout.closeDrawer(GravityCompat.START)
+            true
+        }
+
+
     }
+
     private fun addNewPost() {
         val intent = Intent(this, AddEditPostActivity::class.java)
         Log.i("TOMASZ", "dodaj nowy post")
@@ -100,9 +135,37 @@ class TabbedActivity : AppCompatActivity() {
         val intent = Intent(this, AddEditTripActivity::class.java)
         startActivityForResult(intent, AddEditTripActivity.REQUEST_CODE)
     }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_tabbed, menu)
+        return true
+    }
+
+    override fun onBackPressed() {
+        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+            drawer_layout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        // Handle navigation view item clicks here.
+        when (item.itemId) {
+
+            R.id.update_profile -> {
+                // Handle the camera action
+            }
+            R.id.contact -> {
+
+            }
+            R.id.alarms -> {
+
+            }
+        }
+
+        drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
 

@@ -5,26 +5,69 @@ import com.example.herben.tripmonitor.data.Post
 import com.example.herben.tripmonitor.data.Trip
 import com.example.herben.tripmonitor.data.User
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 
 
 class RemoteDatabase : FirebaseProvider{
-    override fun updateUserInfo(name: String, phoneNumber: String, userId: String) {
+    override fun getUsersFromList(users: List<String>): List<User> {
+        val entries : MutableList<User> = mutableListOf()
+
+        databaseReference.child("PublicUsers").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                entries.clear()
+                for (entrySnapshot in dataSnapshot.children) {
+                    val entry = entrySnapshot.getValue<User>(User::class.java)
+                    for(x in entries) {
+                        if (x.id == entry!!.id)
+                            entries.add(entry)
+                    }
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.e("DatabaseError", databaseError.details)
+            }
+        })
+        return entries
+    }
+
+    override fun updateUserInfo(name: String?, phoneNumber: String?, email: String?) {
         checkoutUser()
-        databaseReference.child("Users").child(usersUid).child("name").setValue(name)
-        databaseReference.child("Users").child(usersUid).child("phoneNumber").setValue(phoneNumber)
+        databaseReference.runTransaction(object : Transaction.Handler {
+            override fun doTransaction(mutableData: MutableData): Transaction.Result {
+                val id = mutableData.child("Users").child("id").value as String
+                val user = mutableData.child("PublicUsers").child(id)
+                name?.let {
+                    user.child("name").value = it
+                }
+                phoneNumber?.let{
+                    user.child("phoneNumber").value = it
+                }
+                email?.let {
+                    user.child("email").value = it
+                }
+                return Transaction.success(mutableData)
+            }
+
+            override fun onComplete(
+                    databaseError: DatabaseError?,
+                    b: Boolean,
+                    dataSnapshot: DataSnapshot?
+            ) {
+                // Transaction completed
+                Log.d("TOMASZ", "postTransaction:onComplete:" + databaseError!!)
+            }
+        })
     }
 
     override fun insertUser(userId: String) {
         checkoutUser()
         databaseReference.child("Users").child(usersUid).setValue(User("", "", "", userId))
+        databaseReference.child("PublicUsers").child(userId).setValue(User("", "", "", userId))
     }
 
     override fun updateActiveTrip(userId: String, tripId: String) {
-        databaseReference.child("Users").child(userId).child("trip").setValue(tripId)
+        databaseReference.child("PublicUsers").child(userId).child("trip").setValue(tripId)
     }
 
     override fun getActiveTrip(userId: String): Trip? {
@@ -47,11 +90,10 @@ class RemoteDatabase : FirebaseProvider{
 
     override fun getUserById(entryId: String): User? {
         var entry : User? = null
-        databaseReference.child("Users").child(entryId).addValueEventListener(object : ValueEventListener {
+        databaseReference.child("PublicUsers").child(entryId).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 entry = dataSnapshot.getValue<User>(User::class.java)
             }
-
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.e("Read Posts", "Failed")
             }
@@ -61,7 +103,7 @@ class RemoteDatabase : FirebaseProvider{
 
     override fun getAllUsers(): List<User> {
         val entries : MutableList<User> = mutableListOf()
-        databaseReference.child("Users").addValueEventListener(object : ValueEventListener {
+        databaseReference.child("PublicUsers").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 entries.clear()
                 for (entrySnapshot in dataSnapshot.children) {

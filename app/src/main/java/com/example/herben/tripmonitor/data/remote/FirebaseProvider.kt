@@ -25,5 +25,6 @@ interface FirebaseProvider {
 
     fun getActiveTrip(userId: String): Trip?
     fun updateActiveTrip(userId: String, tripId: String)
-    fun updateUserInfo(name: String, phoneNumber: String, userId: String)
+    fun updateUserInfo(name: String?, phoneNumber: String?, email: String?)
+    fun getUsersFromList(users: List<String>): List<User>
 }

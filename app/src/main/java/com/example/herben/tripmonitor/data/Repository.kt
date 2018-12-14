@@ -16,7 +16,7 @@ class Repository private constructor(private val remoteDataSource: DataSource,
 
     override fun updateUser(name: String, phoneNumber: String, userId: String) {
         remoteDataSource.updateUser(name, phoneNumber, userId)
-        localDataSource.updateUser(name, phoneNumber, userId)
+       //localDataSource.updateUser(name, phoneNumber, userId)
 
         val uid = AuthActivity.getUserUid()
         uid?.let {

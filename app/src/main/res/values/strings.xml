@@ -31,4 +31,14 @@
     <string name="edit_user">Edit User</string>
     <string name="empty_user_message">User fields are empty</string>
     <string name="phone_number">111222333</string>
+    <string name="update_profile">Update Profile</string>
+    <string name="title_activity_aa">aa</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="drawer_open" />
+    <string name="drawer_close" />
+    <string name="add">Add</string>
 </resources>

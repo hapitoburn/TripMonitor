@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <data>
         <import type="android.view.View"/>
         <variable
@@ -42,11 +43,30 @@
                 <EditText
                     android:id="@+id/add_task_description"
                     android:layout_width="match_parent"
-                    android:layout_height="350dp"
+                    android:layout_height="wrap_content"
                     android:gravity="top"
                     android:hint="@string/body"
-                    android:text="@={viewmodel.body}"/>
-
+                    android:text="@={viewmodel.body}" />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/trip_list"
+                    app:items="@{viewmodel.trips}"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/button_add_trip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add"/>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/users_list"
+                    app:items="@{viewmodel.users}"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/button_add_user"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add"/>
             </LinearLayout>
         </ScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>

@@ -26,6 +26,8 @@ interface DataSource {
     fun getTrips(callback: LoadCallback<Trip>)
     fun deleteTrip(entryId: String)
     fun refreshTrips()
+
     fun insertUser(userId: String)
-    fun updateUser(name: String, phoneNumber: String, userId: String)
+    fun updateUser(name: String?, phoneNumber: String?, email: String?, userId: String)
+    fun getUsersFromList(users: List<String>,  callback: LoadCallback<User>)
 }

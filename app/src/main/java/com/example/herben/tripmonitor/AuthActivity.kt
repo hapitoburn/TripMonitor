@@ -1,5 +1,6 @@
 package com.example.herben.tripmonitor
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -19,8 +20,12 @@ import android.widget.Toast
 import com.example.herben.tripmonitor.common.Injection
 import com.example.herben.tripmonitor.common.Utils
 import com.example.herben.tripmonitor.data.User
+import com.example.herben.tripmonitor.ui.user.AddUserDetailsActivity
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseUser
+
+
 
 
 class AuthActivity : AppCompatActivity() {
@@ -33,12 +38,13 @@ class AuthActivity : AppCompatActivity() {
 
         FirebaseApp.initializeApp(this)
 
-        if(FirebaseAuth.getInstance().currentUser == null) {
+        //if(FirebaseAuth.getInstance().currentUser == null) {
             singIn()
-        }
+        /*}
         else {
             startTabbedActivity(false)
         }
+        */
     }
 
     override fun onResume() {
@@ -54,26 +60,38 @@ class AuthActivity : AppCompatActivity() {
         if (requestCode == RC_SIGN_IN) {
             val response = IdpResponse.fromResultIntent(data)
             if (resultCode == RESULT_OK) {
-                startTabbedActivity(response?.isNewUser)
+                if(response?.isNewUser == true){
+                    val postRepository = Injection.provideRepository(applicationContext)
+                    postRepository.insertUser(User().id)
+                    val activity = Intent(this.applicationContext, AddUserDetailsActivity::class.java)
+                    startActivityForResult(activity, UPDATE_USER)
+                }
+                else
+                    startTabbedActivity()
             } else {
                 Toast.makeText(this,
                         "Sign in failed", Toast.LENGTH_LONG).show();
             }
         }
+        else if (requestCode == UPDATE_USER){
+            if(resultCode == AddUserDetailsActivity.ADD_EDIT_RESULT_OK){
+                startTabbedActivity()
+            }
+            else {
+                val activity = Intent(this.applicationContext, AddUserDetailsActivity::class.java)
+                startActivityForResult(activity, UPDATE_USER)
+            }
+        }
     }
 
-    private fun startTabbedActivity(isNewUser : Boolean?) {
+    private fun startTabbedActivity() {
         val userUid = FirebaseAuth.getInstance().currentUser?.uid
-        val postRepository = Injection.provideRepository(applicationContext)
-        if(isNewUser == true)
-            postRepository.insertUser(User().id)
 
         val editor = getSharedPreferences(USER_UID, MODE_PRIVATE).edit()
         editor.putString(USER_UID, userUid)
         editor.apply()
 
         val startTabbedActivity = Intent(this.applicationContext, TabbedActivity::class.java)
-        intent.putExtra(NEW_USER, isNewUser ?: false)
         startActivity(startTabbedActivity)
     }
     private fun singIn() {
@@ -96,6 +114,7 @@ class AuthActivity : AppCompatActivity() {
 
     companion object {
         private const val RC_SIGN_IN = 100
+        private const val UPDATE_USER = 101
         const val USER_UID = "UserUid"
         const val NEW_USER = "IsUserNew"
         fun getContextOfApplication(): Context {

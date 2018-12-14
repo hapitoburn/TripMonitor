@@ -64,9 +64,6 @@ class SearchTripFragment : Fragment() {
         entriesList!!.adapter = adapter
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater!!.inflate(R.menu.menu_tabbed, menu)
-    }
     //override fun onListItemClick(post: Post) {
     //    board?.getOpenEntryEvent()?.value = post.id?
     //}

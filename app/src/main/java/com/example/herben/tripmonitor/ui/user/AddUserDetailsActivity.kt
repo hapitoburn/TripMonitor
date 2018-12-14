@@ -4,14 +4,15 @@ import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import com.example.herben.tripmonitor.R
 import com.example.herben.tripmonitor.common.Utils
 
 class AddUserDetailsActivity: AppCompatActivity()  {
     companion object {
         val REQUEST_CODE = 3
+        val ADD_EDIT_RESULT_OK = RESULT_FIRST_USER + 3
     }
-    private val ADD_EDIT_RESULT_OK = RESULT_FIRST_USER + 3
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -27,9 +28,11 @@ class AddUserDetailsActivity: AppCompatActivity()  {
     }
 
     fun onEntrySaved() {
+        Log.i("TOM", "On entry saved ")
         setResult(ADD_EDIT_RESULT_OK)
         finish()
     }
+
     private fun subscribeToNavigationChanges() {
         val viewModel = AddUserDetailsViewModel.obtain(this)
         // The activity observes the navigation events in the ViewModel

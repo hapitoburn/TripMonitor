@@ -43,7 +43,7 @@ class AddEditPostFragment : Fragment() {
         setHasOptionsMenu(true)
         retainInstance = false
 
-        return dataBinding!!.getRoot()
+        return dataBinding!!.root
     }
     private fun loadData() {
         // Add or edit an existing task?

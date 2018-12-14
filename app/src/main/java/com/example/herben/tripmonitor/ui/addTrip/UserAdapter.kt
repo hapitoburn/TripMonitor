@@ -1,18 +1,18 @@
-package com.example.herben.tripmonitor.ui.searchTrip
+package com.example.herben.tripmonitor.ui.addTrip
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.herben.tripmonitor.data.Trip
+import com.example.herben.tripmonitor.data.User
 import com.example.herben.tripmonitor.databinding.ItemSearchTripsBinding
-import kotlinx.android.synthetic.main.item_search_trips.view.*
 
-class SearchTripAdapter  : RecyclerView.Adapter<SearchTripAdapter.ViewHolder>() {
+class UserAdapter  : RecyclerView.Adapter<UserAdapter.ViewHolder>() {
 
-    private var trips: List<Trip>? = null
+    private var list: List<User>? = null
 
     interface ListItemClickListener {
-        fun onListItemClick(trip: Trip)
+        fun onListItemClick(users: User)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -25,7 +25,7 @@ class SearchTripAdapter  : RecyclerView.Adapter<SearchTripAdapter.ViewHolder>() 
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val trip = trips?.get(position)
+        val trip = list?.get(position)
         /*
         val date = post.date
 
@@ -42,16 +42,15 @@ class SearchTripAdapter  : RecyclerView.Adapter<SearchTripAdapter.ViewHolder>() 
     }
 
     override fun getItemCount(): Int {
-        return if (this.trips != null) this.trips!!.size else 0
+        return if (this.list != null) this.list!!.size else 0
     }
 
     inner class ViewHolder(val binding: ItemSearchTripsBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Trip?) {
+        fun bind(item: User?) {
             with(binding) {
                 name.text = item?.name
-                dateFrom.text = item?.dateFrom.toString()
-                dateTo.text = item?.dateTo.toString()
+                dateFrom.text = item?.phoneNumber
             }
         }
 
@@ -62,12 +61,12 @@ class SearchTripAdapter  : RecyclerView.Adapter<SearchTripAdapter.ViewHolder>() 
         //        }
     }
 
-    fun replaceData(entries: List<Trip>) {
+    fun replaceData(entries: List<User>) {
         setList(entries)
     }
 
-    private fun setList(entries: List<Trip>) {
-        trips = entries
+    private fun setList(entries: List<User>) {
+        list = entries
         notifyDataSetChanged()
     }
 }

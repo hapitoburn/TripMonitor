@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.support.v4.app.FragmentActivity
+import android.util.Log
 import com.example.herben.tripmonitor.AuthActivity
 import com.example.herben.tripmonitor.R
 import com.example.herben.tripmonitor.common.Injection
@@ -41,6 +42,7 @@ class AddUserDetailsViewModel : ViewModel(), DataSource.GetCallback<User> {
     private lateinit var postRepository: Repository
 
     fun start() {
+        Log.i("TOMASZ", "Started userDetails entry ")
         val entryId = AuthActivity.getUserUid()
         if (dataLoading.get()) {
             // Already loading, ignore.
@@ -68,6 +70,7 @@ class AddUserDetailsViewModel : ViewModel(), DataSource.GetCallback<User> {
     }
 
     internal fun saveEntry() {
+        Log.i("TOMASZ", "Saving userDetails entry ")
         if (phoneNumber.get() == null || name.get() == null) {
             snackbarMessage.setValue(R.string.empty_user_message)
             return
@@ -75,7 +78,8 @@ class AddUserDetailsViewModel : ViewModel(), DataSource.GetCallback<User> {
         updateUser()
     }
     private fun updateUser() {
-        postRepository.updateUser(phoneNumber.get()!!, name.get()!!, mEntryId!!)
+        Log.i("TOMASZ", "Update user details ")
+        postRepository.updateUser( name.get()!!,phoneNumber.get()!!, mEntryId ?: "")
         userUpdatedEvent.call()
     }
 

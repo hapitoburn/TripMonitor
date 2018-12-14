@@ -26,7 +26,13 @@ interface UserDao {
     @Query("UPDATE users SET trip=:tripId WHERE id = :userId")
     fun updateActiveTrip(userId: String, tripId: String)
 
-    @Query("UPDATE users SET name=:name, phoneNumber=:phoneNumber WHERE id = :userId")
-    fun updateInfo(name: String, phoneNumber: String, userId : String)
+    @Query("UPDATE users SET email=:email WHERE id = :userId")
+    fun updateEmailInfo(email: String, userId : String)
+
+    @Query("UPDATE users SET name=:name WHERE id = :userId")
+    fun updateNameInfo(name: String, userId : String)
+
+    @Query("UPDATE users SET phoneNumber=:phoneNumber WHERE id = :userId")
+    fun updatePhoneInfo(phoneNumber: String, userId : String)
 
 }

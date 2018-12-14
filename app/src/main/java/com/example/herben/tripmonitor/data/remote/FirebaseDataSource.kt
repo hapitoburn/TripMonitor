@@ -12,8 +12,14 @@ import com.example.herben.tripmonitor.data.User
 import com.google.firebase.auth.FirebaseAuth
 
 class FirebaseDataSource private constructor(private var appExecutors: AppExecutors, private var provider: FirebaseProvider) : DataSource {
-    override fun updateUser(name: String, phoneNumber: String, userId: String) {
-        val runnable = Runnable { provider.updateUserInfo(name, phoneNumber, userId) }
+    override fun getUsersFromList(users: List<String>, callback: DataSource.LoadCallback<User>) {
+        val entryList = provider.getUsersFromList(users)
+        val handler = Handler()
+        handler.postDelayed({ callback.onLoaded(entryList) }, SERVICE_LATENCY_MS)
+    }
+
+    override fun updateUser(name: String?, phoneNumber: String?, email: String?, userId: String) {
+        val runnable = Runnable { provider.updateUserInfo(name, phoneNumber, email) }
         appExecutors.networkIO().execute(runnable)
     }
 

@@ -13,24 +13,33 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">
-
-        <activity android:name=".ui.board.TabbedActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+        tools:ignore="GoogleAppIndexingWarning"
+        >
+        <activity
+            android:name=".ui.board.TabbedActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".AuthActivity">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".ui.addPost.AddEditPostActivity"
             android:label="@string/title_activity_addedit_post"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".ui.user.AddUserDetailsActivity"
+            android:label="Add user detalis"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".ui.addTrip.AddEditTripActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDBNKNueA5ZkoqBAemRQ_wbbmlxgn2b9jg"/>
     </application>
 
 </manifest>

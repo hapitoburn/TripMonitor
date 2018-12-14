@@ -2,10 +2,8 @@ package com.example.herben.tripmonitor.ui.addTrip
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProviders
+import android.databinding.*
 import android.databinding.Observable
-import android.databinding.ObservableArrayList
-import android.databinding.ObservableBoolean
-import android.databinding.ObservableField
 import android.support.v4.app.FragmentActivity
 import com.example.herben.tripmonitor.R
 import com.example.herben.tripmonitor.common.Injection
@@ -14,16 +12,18 @@ import com.example.herben.tripmonitor.common.SnackbarMessage
 import com.example.herben.tripmonitor.data.DataSource
 import com.example.herben.tripmonitor.data.Repository
 import com.example.herben.tripmonitor.data.Trip
+import com.example.herben.tripmonitor.data.User
 import java.util.*
 
-class AddEditTripViewModel : ViewModel(), DataSource.GetCallback<Trip>{
+class AddEditTripViewModel : ViewModel(), DataSource.GetCallback<Trip>, DataSource.LoadCallback<User>{
+
     val name = ObservableField<String>()
     val body = ObservableField<String>()
     val dateFrom = ObservableField<Date>()
     val dateTo = ObservableField<Date>()
     val places = ObservableArrayList<String>()
     val dataLoading = ObservableBoolean(false)
-    val users = ObservableArrayList<String>()
+    var users: ObservableList<User> = ObservableArrayList<User>()
 
     internal val snackbarMessage = SnackbarMessage()
 
@@ -73,6 +73,14 @@ class AddEditTripViewModel : ViewModel(), DataSource.GetCallback<Trip>{
         body.set(entity.body)
         dataLoading.set(false)
         mIsDataLoaded = true
+        if(entity.users.isNotEmpty()){
+            repository.getUsersFromList(entity.users, this)
+        }
+    }
+
+    override fun onLoaded(entries: List<User>) {
+        users.clear()
+        users.addAll(entries)
     }
 
     override fun onDataNotAvailable() {
@@ -81,7 +89,8 @@ class AddEditTripViewModel : ViewModel(), DataSource.GetCallback<Trip>{
 
     // Called when clicking on fab.
     internal fun saveEntry() {
-        var trip = Trip(name.get(), body.get(), dateFrom.get(), dateTo.get(), "leader", "leaderId", users, places)
+        val userIds = users.map { it.id }
+        var trip = Trip(name.get(), body.get(), dateFrom.get(), dateTo.get(), "leader", "leaderId", userIds, places)
 
         if (trip.isEmpty()) {
             snackbarMessage.setValue(R.string.empty_trip_message)
@@ -90,7 +99,7 @@ class AddEditTripViewModel : ViewModel(), DataSource.GetCallback<Trip>{
         if (isNewEntry || mEntryId == null) {
             createTrip(trip)
         } else {
-            trip = Trip(name.get(), body.get(),  dateFrom.get(), dateTo.get(),"leader", "leaderId", users, places, mEntryId!!)
+            trip = Trip(name.get(), body.get(),  dateFrom.get(), dateTo.get(),"leader", "leaderId", userIds, places, mEntryId!!)
             updateTrip(trip)
         }
     }

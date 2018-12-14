@@ -6,6 +6,7 @@ import android.support.annotation.StringRes
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,6 +41,8 @@ class AddUserDetailsFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        Log.i("TOMASZ", "Fragment userDetails activity created ")
+
         viewModel.start()
         setupFab()
 
@@ -56,7 +59,8 @@ class AddUserDetailsFragment : Fragment() {
     }
 
     private fun setupFab() {
-        val fab : FloatingActionButton? = activity?.findViewById(R.id.fab_edit_user_done)
+        Log.i("TOMASZ", "setting up Fab")
+        val fab : FloatingActionButton? = activity?.findViewById(R.id.fab_edit_task_done)
         fab?.setOnClickListener { viewModel.saveEntry() }
     }
     private fun setupActionBar() {

@@ -59,9 +59,6 @@ class BoardFragment : Fragment()/*, BoardAdapter.ListItemClickListener*/ {
         Log.i("TOMASZ", "BOARD created")
     }
 
-    //override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-    //    inflater!!.inflate(R.menu.menu_tabbed, menu)
-    //}
     //override fun onListItemClick(post: Post) {
     //    board?.getOpenEntryEvent()?.value = post.id?
     //}

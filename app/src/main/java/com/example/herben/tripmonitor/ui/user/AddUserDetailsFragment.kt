@@ -1,6 +1,5 @@
 package com.example.herben.tripmonitor.ui.user
 
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.design.widget.FloatingActionButton

@@ -21,7 +21,7 @@ data class Trip(@ColumnInfo(name = "name") var name: String? = "",
 )
 {
     fun isEmpty() : Boolean{
-        if (name.isNullOrBlank() || body.isNullOrBlank())
+        if (name.isNullOrEmpty() || body.isNullOrEmpty() || leaderId.isNullOrEmpty())
             return true
         return false
     }

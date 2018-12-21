@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.os.Bundle
-import android.support.annotation.NonNull
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
@@ -24,23 +23,21 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.herben.tripmonitor.AuthActivity
 import com.example.herben.tripmonitor.R
+import com.example.herben.tripmonitor.common.Injection
+import com.example.herben.tripmonitor.data.DataSource
+import com.example.herben.tripmonitor.data.User
 import com.example.herben.tripmonitor.ui.addPost.AddEditPostActivity
 import com.example.herben.tripmonitor.ui.addTrip.AddEditTripActivity
 import com.example.herben.tripmonitor.ui.searchTrip.SearchTripFragment
 import com.example.herben.tripmonitor.ui.trip.TripOverwiewFragment
 import com.example.herben.tripmonitor.ui.user.AddUserDetailsActivity
-import com.example.herben.tripmonitor.ui.user.AddUserDetailsFragment
 import com.firebase.ui.auth.AuthUI
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 
 import kotlinx.android.synthetic.main.activity_tabbed.*
 import kotlinx.android.synthetic.main.fragment_tabbed.view.*
 
-class TabbedActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class TabbedActivity : AppCompatActivity(){
 
     /**
      * The [android.support.v4.view.PagerAdapter] that will provide
@@ -57,10 +54,9 @@ class TabbedActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         //TODO check if above is safe
         setContentView(R.layout.activity_tabbed)
-
+        Injection.provideRepository(applicationContext).loadUserId()
         setSupportActionBar(toolbar)
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -121,8 +117,6 @@ class TabbedActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             drawer_layout.closeDrawer(GravityCompat.START)
             true
         }
-
-
     }
 
     private fun addNewPost() {
@@ -150,25 +144,6 @@ class TabbedActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         }
     }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
-        when (item.itemId) {
-
-            R.id.update_profile -> {
-                // Handle the camera action
-            }
-            R.id.contact -> {
-
-            }
-            R.id.alarms -> {
-
-            }
-        }
-
-        drawer_layout.closeDrawer(GravityCompat.START)
-        return true
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -193,6 +168,9 @@ class TabbedActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         AuthUI.getInstance()
                 .signOut(this)
                 .addOnCompleteListener {
+                    val repository = Injection.provideRepository(applicationContext)
+                    repository.invalidate()
+                    AuthActivity.removeUserId()
                     Log.i("TOMASZ", "completed")
                     finish()
                 }
@@ -207,19 +185,15 @@ class TabbedActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
      * one of the sections/tabs/pages.
      */
     inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
-
+        fun update(){
+            notifyDataSetChanged()
+        }
         override fun getItem(position: Int): Fragment {
             return when(position){
-                1 -> BoardFragment.newInstance()
+                1 -> SearchTripFragment.newInstance()
                 2 -> {
-                    val id : String? = prefs!!.getString(TRIP_ID, "")
-                    if(id.isNullOrEmpty()) {
-                        SearchTripFragment.newInstance()
+                        TripOverwiewFragment.newInstance()
                     }
-                    else {
-                        TripOverwiewFragment.newInstance(id!!)
-                    }
-                }
                 else -> PlaceholderFragment.newInstance(position + 1)
             }
         }

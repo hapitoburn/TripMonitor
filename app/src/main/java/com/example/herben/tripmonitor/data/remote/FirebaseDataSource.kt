@@ -1,9 +1,7 @@
 package com.example.herben.tripmonitor.data.remote
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Handler
-import com.example.herben.tripmonitor.AuthActivity
 import com.example.herben.tripmonitor.common.AppExecutors
 import com.example.herben.tripmonitor.data.Post
 import com.example.herben.tripmonitor.data.DataSource
@@ -12,6 +10,16 @@ import com.example.herben.tripmonitor.data.User
 import com.google.firebase.auth.FirebaseAuth
 
 class FirebaseDataSource private constructor(private var appExecutors: AppExecutors, private var provider: FirebaseProvider) : DataSource {
+    override fun getUserId(callback: DataSource.GetCallback<User>) {
+
+        val runnable = Runnable {
+            appExecutors.mainThread().execute {
+                provider.getUserId(callback)
+            }
+        }
+        appExecutors.networkIO().execute(runnable)
+    }
+
     override fun getUsersFromList(users: List<String>, callback: DataSource.LoadCallback<User>) {
         val entryList = provider.getUsersFromList(users)
         val handler = Handler()
@@ -19,7 +27,7 @@ class FirebaseDataSource private constructor(private var appExecutors: AppExecut
     }
 
     override fun updateUser(name: String?, phoneNumber: String?, email: String?, userId: String) {
-        val runnable = Runnable { provider.updateUserInfo(name, phoneNumber, email) }
+        val runnable = Runnable { provider.updateUserInfo(name, phoneNumber, email, userId) }
         appExecutors.networkIO().execute(runnable)
     }
 
@@ -49,7 +57,7 @@ class FirebaseDataSource private constructor(private var appExecutors: AppExecut
 
     override fun getUser(entryId: String, callback: DataSource.GetCallback<User>) {
         val runnable = Runnable {
-            val entry = provider.getUserById(entryId)
+            val entry = provider.getUserById(entryId, callback)
             appExecutors.mainThread().execute {
                 if (entry != null) {
                     callback.onLoaded(entry)
@@ -69,13 +77,8 @@ class FirebaseDataSource private constructor(private var appExecutors: AppExecut
 
     override fun getTrip(entryId: String, callback: DataSource.GetCallback<Trip>) {
         val runnable = Runnable {
-            val entry = provider.getTripById(entryId)
             appExecutors.mainThread().execute {
-                if (entry != null) {
-                    callback.onLoaded(entry)
-                } else {
-                    callback.onDataNotAvailable()
-                }
+                provider.getTripById(entryId, callback)
             }
         }
         appExecutors.networkIO().execute(runnable)
@@ -170,11 +173,5 @@ class FirebaseDataSource private constructor(private var appExecutors: AppExecut
             }
             return INSTANCE!!
         }
-    }
-
-    private fun setUpSharedPreferences() {
-        val applicationContext = AuthActivity.getContextOfApplication()
-        val MY_PREFS_NAME = "UserUid"
-        prefs = applicationContext.getSharedPreferences(MY_PREFS_NAME, Context.MODE_PRIVATE)
     }
 }

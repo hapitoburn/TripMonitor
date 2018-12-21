@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.herben.tripmonitor.data.Trip
 import com.example.herben.tripmonitor.data.User
-import com.example.herben.tripmonitor.databinding.ItemSearchTripsBinding
+import com.example.herben.tripmonitor.databinding.ItemTripUserBinding
 
 class UserAdapter  : RecyclerView.Adapter<UserAdapter.ViewHolder>() {
 
@@ -19,7 +19,7 @@ class UserAdapter  : RecyclerView.Adapter<UserAdapter.ViewHolder>() {
 
         val inflater = LayoutInflater.from(parent.context)
 
-        val view = ItemSearchTripsBinding.inflate(inflater)
+        val view = ItemTripUserBinding.inflate(inflater)
 
         return ViewHolder(view)
     }
@@ -45,12 +45,13 @@ class UserAdapter  : RecyclerView.Adapter<UserAdapter.ViewHolder>() {
         return if (this.list != null) this.list!!.size else 0
     }
 
-    inner class ViewHolder(val binding: ItemSearchTripsBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding: ItemTripUserBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: User?) {
             with(binding) {
                 name.text = item?.name
-                dateFrom.text = item?.phoneNumber
+                email.text = item?.email
+                phone.text = item?.phoneNumber
             }
         }
 

@@ -12,4 +12,9 @@ data class User(@ColumnInfo(name = "name") var name: String = "",
                 @ColumnInfo(name = "email") var email: String = "",
                 @ColumnInfo(name = "trip") var trip: String = "",
                 @PrimaryKey @NonNull var id : String = UUID.randomUUID().toString()
+
 )
+{
+    constructor(id: String) : this("", "", "", "", id){}
+
+}

@@ -54,15 +54,15 @@ class TripOverwiewViewModel (context: Application) : AndroidViewModel(context) {
         get() = Calendar.getInstance().time
 
     companion object{
-        fun obtain(activity: FragmentActivity, id : String): TripOverwiewViewModel {
+        fun obtain(activity: FragmentActivity): TripOverwiewViewModel {
             val vm = ViewModelProviders.of(activity).get(TripOverwiewViewModel::class.java)
             vm.repository = Injection.provideRepository(activity.applicationContext)
-            vm.tripId = id
             return vm
         }
     }
 
     fun start() {
+        tripId = repository.user.entity?.trip.orEmpty()
         loadEntry(false)
     }
 
@@ -75,6 +75,8 @@ class TripOverwiewViewModel (context: Application) : AndroidViewModel(context) {
      * @param showLoadingUI Pass in true to display a loading icon in the UI
      */
     private fun loadEntry(forceUpdate: Boolean, showLoadingUI: Boolean) {
+        if(tripId.isEmpty())
+            return
         if (showLoadingUI) {
             isDataLoading.set(true)
         }
@@ -84,13 +86,21 @@ class TripOverwiewViewModel (context: Application) : AndroidViewModel(context) {
 
         repository.getTrip(tripId, object : DataSource.GetCallback<Trip> {
             override fun onLoaded(entity: Trip?) {
+                if(entity == null)
+                    return
                 if (showLoadingUI) {
                     isDataLoading.set(false)
                 }
                 isDataLoadingError.set(false)
 
                 trip.set(entity)
+                name.set(entity.name)
+                body.set(entity.body)
+                places.clear()
+                places.addAll(entity.places)
+                body.notifyChange()
                 trip.notifyChange()
+                name.notifyChange()
                 empty.set(trip.get()!!.isEmpty())
             }
 

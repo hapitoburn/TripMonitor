@@ -10,7 +10,6 @@ import com.example.herben.tripmonitor.common.Utils
 
 class AddUserDetailsActivity: AppCompatActivity()  {
     companion object {
-        val REQUEST_CODE = 3
         val ADD_EDIT_RESULT_OK = RESULT_FIRST_USER + 3
     }
     override fun onCreate(savedInstanceState: Bundle?) {

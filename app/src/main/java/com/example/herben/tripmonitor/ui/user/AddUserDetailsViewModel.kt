@@ -26,6 +26,7 @@ class AddUserDetailsViewModel : ViewModel(), DataSource.GetCallback<User> {
 
     val name = ObservableField<String>()
     val phoneNumber = ObservableField<String>()
+    val email = ObservableField<String>()
 
     val dataLoading = ObservableBoolean(false)
 
@@ -42,8 +43,7 @@ class AddUserDetailsViewModel : ViewModel(), DataSource.GetCallback<User> {
     private lateinit var postRepository: Repository
 
     fun start() {
-        Log.i("TOMASZ", "Started userDetails entry ")
-        val entryId = AuthActivity.getUserUid()
+        mEntryId = AuthActivity.getUserId()
         if (dataLoading.get()) {
             // Already loading, ignore.
             return
@@ -54,13 +54,13 @@ class AddUserDetailsViewModel : ViewModel(), DataSource.GetCallback<User> {
         }
         isNewEntry = false
         dataLoading.set(true)
-        postRepository.getUser(entryId!!, this)
+        postRepository.getUser(mEntryId!!, this)
     }
 
     override fun onLoaded(entity: User?) {
         name.set(entity!!.name)
         phoneNumber.set(entity.phoneNumber)
-        mEntryId = entity.id
+        email.set(entity.email)
         dataLoading.set(false)
         mIsDataLoaded = true
     }
@@ -78,9 +78,8 @@ class AddUserDetailsViewModel : ViewModel(), DataSource.GetCallback<User> {
         updateUser()
     }
     private fun updateUser() {
-        Log.i("TOMASZ", "Update user details ")
-        postRepository.updateUser( name.get()!!,phoneNumber.get()!!, mEntryId ?: "")
+        Log.i("TOMASZ", "Update user details id $mEntryId")
+        postRepository.updateUser( name.get(), phoneNumber.get(), email.get(), mEntryId ?: "")
         userUpdatedEvent.call()
     }
-
 }

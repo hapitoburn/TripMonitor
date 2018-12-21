@@ -1,7 +1,5 @@
 package com.example.herben.tripmonitor.ui.trip
 
-import android.arch.lifecycle.ViewModelProviders
-import android.databinding.BindingAdapter
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
@@ -11,14 +9,13 @@ import android.view.*
 import com.example.herben.tripmonitor.databinding.FragmentTripBinding
 
 import com.example.herben.tripmonitor.R
+import com.example.herben.tripmonitor.ui.addTrip.AddEditTripFragment
 
 class TripOverwiewFragment () : Fragment() {
 
     companion object {
-        fun newInstance(tripId : String) : TripOverwiewFragment{
-            var fragment = TripOverwiewFragment()
-            fragment.tripId = tripId
-            return fragment
+        fun newInstance() : TripOverwiewFragment{
+            return TripOverwiewFragment()
         }
     }
 
@@ -36,7 +33,7 @@ class TripOverwiewFragment () : Fragment() {
                               savedInstanceState: Bundle?): View? {
         postsBinding = FragmentTripBinding.inflate(inflater, container, false)
 
-        viewModel = TripOverwiewViewModel.obtain(activity!!, tripId)
+        viewModel = TripOverwiewViewModel.obtain(activity!!)
 
         postsBinding!!.viewmodel = viewModel
 
@@ -49,7 +46,7 @@ class TripOverwiewFragment () : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        entriesList = view.findViewById(R.id.item_trip_place)
+        entriesList = view.findViewById(R.id.item_trip_places)
 
         val layoutManager = LinearLayoutManager(context)
 

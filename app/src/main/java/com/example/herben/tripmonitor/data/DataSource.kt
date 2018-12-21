@@ -19,6 +19,7 @@ interface DataSource {
     fun deleteAllPosts()
     fun deletePost(entryId: String)
     fun getUser(entryId: String, callback: GetCallback<User>)
+    fun getUserId(callback: GetCallback<User>)
     fun getUsers(callback: LoadCallback<User>)
 
     fun saveTrip(trip: Trip)

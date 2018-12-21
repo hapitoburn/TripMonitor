@@ -12,16 +12,21 @@ private constructor(private val appExecutors: AppExecutors,
                     private val posts: PostDao,
                     private val users: UserDao,
                     private val trips: TripDao) : DataSource {
+    override fun getUserId(callback: DataSource.GetCallback<User>) {
+    }
+    override fun getUsersFromList(users: List<String>, callback: DataSource.LoadCallback<User>) {
+    }
+
     override fun updateUser(name: String?, phoneNumber: String?, email: String?, userId: String) {
         val runnable = Runnable {
             phoneNumber?.let {
                 users.updatePhoneInfo( it, userId)
             }
             name?.let {
-                users.updatePhoneInfo( it, userId)
+                users.updateNameInfo( it, userId)
             }
             email?.let {
-                users.updatePhoneInfo( it, userId)
+                users.updateEmailInfo( it, userId)
             }
         }
         appExecutors.diskIO().execute(runnable)
@@ -29,7 +34,7 @@ private constructor(private val appExecutors: AppExecutors,
 
 
     override fun insertUser(userId: String) {
-        val runnable = Runnable { users.insert(User("", "", "", userId)) }
+        val runnable = Runnable { users.insert(User(userId)) }
         appExecutors.diskIO().execute(runnable)
     }
 
@@ -116,7 +121,10 @@ private constructor(private val appExecutors: AppExecutors,
 
     override fun saveTrip(trip: Trip) {
         checkNotNull(trip)
-        val runnable = Runnable { trips.insert(trip) }
+        val runnable = Runnable {
+            trips.insert(trip)
+            users.updateActiveTrip(trip.leaderId!!, trip.id)
+        }
         appExecutors.diskIO().execute(runnable)
     }
 

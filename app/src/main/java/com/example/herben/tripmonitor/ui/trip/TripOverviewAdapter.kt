@@ -6,11 +6,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.herben.tripmonitor.data.Post
 import com.example.herben.tripmonitor.data.Trip
-import com.example.herben.tripmonitor.databinding.ItemTripPlaceBinding
+import com.example.herben.tripmonitor.databinding.StringItemBinding
 
 class TripOverviewAdapter(/*private val mOnClickListener: ListItemClickListener?*/) : RecyclerView.Adapter<TripOverviewAdapter.TripViewHolder>() {
 
-    private var trip: Trip? = null
+    private var trip: Trip? = Trip()
 
     interface ListItemClickListener {
         fun onListItemClick(post: Post)
@@ -20,7 +20,7 @@ class TripOverviewAdapter(/*private val mOnClickListener: ListItemClickListener?
 
         val inflater = LayoutInflater.from(parent.context)
 
-        val view = ItemTripPlaceBinding.inflate(inflater)
+        val view = StringItemBinding.inflate(inflater)
 
         return TripViewHolder(view)
     }
@@ -39,7 +39,7 @@ class TripOverviewAdapter(/*private val mOnClickListener: ListItemClickListener?
         return if (trip != null) trip?.places?.size!! else 0
     }
 
-    inner class TripViewHolder(val binding: ItemTripPlaceBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class TripViewHolder(val binding: StringItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(place: String?) {
             with(binding) {

@@ -1,13 +1,10 @@
 package com.example.herben.tripmonitor
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.annotation.NonNull
-import android.support.design.widget.Snackbar
+import android.util.Log
 import com.example.herben.tripmonitor.ui.board.TabbedActivity
 
 import com.firebase.ui.auth.AuthUI
@@ -15,17 +12,12 @@ import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 
 import java.util.Arrays
-import android.util.Log
 import android.widget.Toast
 import com.example.herben.tripmonitor.common.Injection
-import com.example.herben.tripmonitor.common.Utils
+import com.example.herben.tripmonitor.data.DataSource
 import com.example.herben.tripmonitor.data.User
 import com.example.herben.tripmonitor.ui.user.AddUserDetailsActivity
-import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
-import com.google.firebase.auth.FirebaseUser
-
-
 
 
 class AuthActivity : AppCompatActivity() {
@@ -38,13 +30,13 @@ class AuthActivity : AppCompatActivity() {
 
         FirebaseApp.initializeApp(this)
 
-        //if(FirebaseAuth.getInstance().currentUser == null) {
+        if(FirebaseAuth.getInstance().currentUser == null) {
             singIn()
-        /*}
-        else {
-            startTabbedActivity(false)
         }
-        */
+        else {
+            startTabbedActivity()
+        }
+
     }
 
     override fun onResume() {
@@ -62,7 +54,9 @@ class AuthActivity : AppCompatActivity() {
             if (resultCode == RESULT_OK) {
                 if(response?.isNewUser == true){
                     val postRepository = Injection.provideRepository(applicationContext)
-                    postRepository.insertUser(User().id)
+                    val id = User().id
+                    postRepository.insertUser(id)
+                    setUserId(id)
                     val activity = Intent(this.applicationContext, AddUserDetailsActivity::class.java)
                     startActivityForResult(activity, UPDATE_USER)
                 }
@@ -87,10 +81,9 @@ class AuthActivity : AppCompatActivity() {
     private fun startTabbedActivity() {
         val userUid = FirebaseAuth.getInstance().currentUser?.uid
 
-        val editor = getSharedPreferences(USER_UID, MODE_PRIVATE).edit()
+        val editor = getSharedPreferences(USER, MODE_PRIVATE).edit()
         editor.putString(USER_UID, userUid)
         editor.apply()
-
         val startTabbedActivity = Intent(this.applicationContext, TabbedActivity::class.java)
         startActivity(startTabbedActivity)
     }
@@ -115,14 +108,35 @@ class AuthActivity : AppCompatActivity() {
     companion object {
         private const val RC_SIGN_IN = 100
         private const val UPDATE_USER = 101
+        const val USER = "User"
         const val USER_UID = "UserUid"
+        const val USER_ID = "UserId"
         const val NEW_USER = "IsUserNew"
         fun getContextOfApplication(): Context {
             return instance.applicationContext
         }
         fun  getUserUid(): String? {
             return getContextOfApplication().
-                    getSharedPreferences(USER_UID, MODE_PRIVATE).getString(USER_UID, "")
+                    getSharedPreferences(USER, MODE_PRIVATE).getString(USER_UID, "")
+        }
+
+        fun getUserId(): String? {
+            return getContextOfApplication().
+                    getSharedPreferences(USER, MODE_PRIVATE).getString(USER_ID, "")
+        }
+
+        fun setUserId(id: String?) {
+            if(id == null)
+                return
+            val prefs = getContextOfApplication().getSharedPreferences(USER, Context.MODE_PRIVATE).edit()
+            prefs.putString(USER_ID, id)
+            prefs.apply()
+        }
+
+        fun removeUserId() {
+            val prefs = getContextOfApplication().getSharedPreferences(USER, Context.MODE_PRIVATE).edit()
+            prefs.putString(USER_ID, "")
+            prefs.apply()
         }
 
         lateinit var instance: AuthActivity private set

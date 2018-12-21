@@ -28,7 +28,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{viewmodel.body}" />
+                android:text="@{viewmodel.name}" />
             <LinearLayout
                 android:id="@+id/tasksLL"
                 android:layout_width="match_parent"
@@ -36,7 +36,7 @@
                 android:orientation="vertical"
                 android:visibility="@{viewmodel.empty ? View.GONE : View.VISIBLE}">
                 <android.support.v7.widget.RecyclerView
-                    android:id="@+id/item_trip_place"
+                    android:id="@+id/item_trip_places"
                     app:items="@{viewmodel.places}"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

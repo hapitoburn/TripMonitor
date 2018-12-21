@@ -1,14 +1,17 @@
 package com.example.herben.tripmonitor.ui.searchTrip
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.*
 import com.example.herben.tripmonitor.databinding.SearchTripFragmentBinding
 
 import com.example.herben.tripmonitor.R
+import com.example.herben.tripmonitor.ui.addTrip.AddEditTripActivity
 
 class SearchTripFragment : Fragment() {
 
@@ -40,7 +43,6 @@ class SearchTripFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setupFab()
-        // TODO: Use the ViewModel
     }
 
     override fun onResume() {
@@ -71,7 +73,11 @@ class SearchTripFragment : Fragment() {
 
     private fun setupFab() {
         val fab = activity!!.findViewById(R.id.fab_action_add) as FloatingActionButton
-        fab.setOnClickListener { viewModel.addNewEntry() }
+        fab.setOnClickListener {
+            val intent = Intent(activity, AddEditTripActivity::class.java)
+            Log.i("TOMASZ", "dodaj nowy post")
+            activity!!.startActivity(intent)
+        }
     }
 
 

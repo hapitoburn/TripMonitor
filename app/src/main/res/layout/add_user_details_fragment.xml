@@ -42,11 +42,19 @@
                 <EditText
                     android:id="@+id/add_task_description"
                     android:layout_width="match_parent"
-                    android:layout_height="350dp"
+                    android:layout_height="wrap_content"
                     android:gravity="top"
                     android:maxLength="11"
                     android:hint="@string/phone_number"
                     android:text="@={viewmodel.phoneNumber}"/>
+
+                <EditText
+                    android:id="@+id/add_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:hint="@string/email"
+                    android:text="@={viewmodel.email}"/>
 
             </LinearLayout>
         </ScrollView>

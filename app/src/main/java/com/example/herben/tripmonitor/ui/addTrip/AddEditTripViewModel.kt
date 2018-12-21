@@ -3,8 +3,8 @@ package com.example.herben.tripmonitor.ui.addTrip
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProviders
 import android.databinding.*
-import android.databinding.Observable
 import android.support.v4.app.FragmentActivity
+import android.util.Log
 import com.example.herben.tripmonitor.R
 import com.example.herben.tripmonitor.common.Injection
 import com.example.herben.tripmonitor.common.SingleLiveEvent
@@ -23,11 +23,14 @@ class AddEditTripViewModel : ViewModel(), DataSource.GetCallback<Trip>, DataSour
     val dateTo = ObservableField<Date>()
     val places = ObservableArrayList<String>()
     val dataLoading = ObservableBoolean(false)
+    val userToAdd = ObservableField<String>()
     var users: ObservableList<User> = ObservableArrayList<User>()
+    var usersHolder = UsersHolder()
 
     internal val snackbarMessage = SnackbarMessage()
 
     internal val tripUpdatedEvent: SingleLiveEvent<Void> = SingleLiveEvent()
+    internal val usersLoadedEvent: SingleLiveEvent<Void> = SingleLiveEvent()
 
     private var mEntryId: String? = null
 
@@ -49,6 +52,7 @@ class AddEditTripViewModel : ViewModel(), DataSource.GetCallback<Trip>, DataSour
     }
 
     fun start(entryId: String?) {
+        usersHolder.start(repository, usersLoadedEvent)
         if (dataLoading.get()) {
             // Already loading, ignore.
             return
@@ -90,7 +94,8 @@ class AddEditTripViewModel : ViewModel(), DataSource.GetCallback<Trip>, DataSour
     // Called when clicking on fab.
     internal fun saveEntry() {
         val userIds = users.map { it.id }
-        var trip = Trip(name.get(), body.get(), dateFrom.get(), dateTo.get(), "leader", "leaderId", userIds, places)
+        val user = repository.user.entity
+        var trip = Trip(name.get(), body.get(), dateFrom.get(), dateTo.get(), user?.name, user?.id, userIds, places)
 
         if (trip.isEmpty()) {
             snackbarMessage.setValue(R.string.empty_trip_message)
@@ -99,9 +104,27 @@ class AddEditTripViewModel : ViewModel(), DataSource.GetCallback<Trip>, DataSour
         if (isNewEntry || mEntryId == null) {
             createTrip(trip)
         } else {
-            trip = Trip(name.get(), body.get(),  dateFrom.get(), dateTo.get(),"leader", "leaderId", userIds, places, mEntryId!!)
+            trip = Trip(name.get(), body.get(),  dateFrom.get(), dateTo.get(),repository.user.entity?.name, repository.user.entity?.id, userIds, places, mEntryId!!)
             updateTrip(trip)
         }
+    }
+
+    fun addUser(){
+        Log.i("TOMASZ", "Adding user ${userToAdd.get()}")
+        for(user in usersHolder.users)
+        {
+            Log.i("TOMASZ", "user -> ${user.phoneNumber} || ${user.email}")
+            val userData : String = userToAdd.get().orEmpty()
+            val phoneNumber : String = user.phoneNumber
+            val email : String = user.email
+            if(phoneNumber == userData || email == userData){
+                if(users.any{ o : User -> o.id == user.id }){
+                    return
+                }
+                users.add(user)
+            }
+        }
+        Log.i("TOMASZ", "User not added")
     }
 
     private fun createTrip(trip: Trip) {

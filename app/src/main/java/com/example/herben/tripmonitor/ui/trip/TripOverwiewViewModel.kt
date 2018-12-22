@@ -38,7 +38,7 @@ class TripOverwiewViewModel (context: Application) : AndroidViewModel(context) {
     val isDataLoading = ObservableBoolean(false)
     val isDataLoadingError = ObservableBoolean(false)
 
-    internal val editEntryEvent: SingleLiveEvent<String> = SingleLiveEvent()
+    internal val leaderSetEditableEvent: SingleLiveEvent<String> = SingleLiveEvent()
 
     private var tripId: String = String()
 
@@ -102,6 +102,9 @@ class TripOverwiewViewModel (context: Application) : AndroidViewModel(context) {
                 trip.notifyChange()
                 name.notifyChange()
                 empty.set(trip.get()!!.isEmpty())
+                if(repository.user.entity?.id == entity.leaderId){
+                    leaderSetEditableEvent.call()
+                }
             }
 
             override fun onDataNotAvailable() {

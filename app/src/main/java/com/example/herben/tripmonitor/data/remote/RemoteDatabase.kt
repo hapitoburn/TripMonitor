@@ -27,7 +27,7 @@ class RemoteDatabase : FirebaseProvider{
         })
     }
 
-    override fun getUsersFromList(users: List<String>): List<User> {
+    override fun getUsersFromList(users: List<String>, callback: DataSource.LoadCallback<User>): List<User> {
         val entries : MutableList<User> = mutableListOf()
 
         databaseReference.child("PublicUsers").addValueEventListener(object : ValueEventListener {
@@ -35,15 +35,17 @@ class RemoteDatabase : FirebaseProvider{
                 entries.clear()
                 for (entrySnapshot in dataSnapshot.children) {
                     val entry = entrySnapshot.getValue<User>(User::class.java)
-                    for(x in entries) {
-                        if (x.id == entry!!.id)
+                    for(x in users) {
+                        if (x == entry!!.id)
                             entries.add(entry)
                     }
                 }
+                callback.onLoaded(entries)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.e("DatabaseError", databaseError.details)
+                callback.onDataNotAvailable()
             }
         })
         return entries
@@ -71,7 +73,7 @@ class RemoteDatabase : FirebaseProvider{
 
     override fun getActiveTrip(userId: String): Trip? {
         var trip : Trip? = null
-        databaseReference.child("Trips").addValueEventListener(object : ValueEventListener {
+        databaseReference.child("Trip").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (entrySnapshot in dataSnapshot.children) {
                     val entry = entrySnapshot.getValue<Trip>(Trip::class.java)
@@ -121,7 +123,7 @@ class RemoteDatabase : FirebaseProvider{
 
     override fun getAllTrips(): List<Trip> {
         val entries : MutableList<Trip> = mutableListOf()
-        databaseReference.child("Trips").addValueEventListener(object : ValueEventListener {
+        databaseReference.child("Trip").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 entries.clear()
                 for (entrySnapshot in dataSnapshot.children) {
@@ -140,13 +142,15 @@ class RemoteDatabase : FirebaseProvider{
     override fun getTripById(entryId: String, callback: DataSource.GetCallback<Trip>): Trip? {
         checkoutUser()
         var tripEntry : Trip? = null
-        databaseReference.child("Trips").child(entryId).addValueEventListener(object : ValueEventListener {
+        databaseReference.child("Trip").child(entryId).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 tripEntry = dataSnapshot.getValue<Trip>(Trip::class.java)
+                callback.onLoaded(tripEntry)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.e("Read Posts", "Failed")
+                callback.onDataNotAvailable()
             }
         })
         return tripEntry
@@ -178,18 +182,16 @@ class RemoteDatabase : FirebaseProvider{
 
     override fun insertPost(entry: Post) {
         checkoutUser()
-
         val entryId = entry.id
-        databaseReference.child("Posts").child(usersUid).child(entryId).setValue(entry)
+        databaseReference.child("Posts").child(entry.tripId).child(entryId).setValue(entry)
 
     }
 
     override fun deletePost(entryId: String) {
         checkoutUser()
-
     }
 
-    override fun getAllPosts(): List<Post> {
+    override fun getAllPosts(tripId: String, callback: DataSource.LoadCallback<Post>): List<Post> {
         checkoutUser()
         val postEntries : MutableList<Post> = mutableListOf()
         databaseReference.child("Posts").child(usersUid).addValueEventListener(object : ValueEventListener {
@@ -199,9 +201,10 @@ class RemoteDatabase : FirebaseProvider{
                     val entry = entrySnapshot.getValue<Post>(Post::class.java)
                     postEntries.add(entry!!)
                 }
+                callback.onLoaded(postEntries)
             }
-
             override fun onCancelled(databaseError: DatabaseError) {
+                callback.onDataNotAvailable()
                 Log.e("DatabaseError", databaseError.details)
             }
         })

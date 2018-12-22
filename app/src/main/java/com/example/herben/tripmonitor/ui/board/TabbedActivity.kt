@@ -190,6 +190,7 @@ class TabbedActivity : AppCompatActivity(){
         }
         override fun getItem(position: Int): Fragment {
             return when(position){
+                0 -> BoardFragment.newInstance()
                 1 -> SearchTripFragment.newInstance()
                 2 -> {
                         TripOverwiewFragment.newInstance()

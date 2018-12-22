@@ -21,9 +21,12 @@ class FirebaseDataSource private constructor(private var appExecutors: AppExecut
     }
 
     override fun getUsersFromList(users: List<String>, callback: DataSource.LoadCallback<User>) {
-        val entryList = provider.getUsersFromList(users)
-        val handler = Handler()
-        handler.postDelayed({ callback.onLoaded(entryList) }, SERVICE_LATENCY_MS)
+        val runnable = Runnable {
+            appExecutors.mainThread().execute {
+                provider.getUsersFromList(users, callback)
+            }
+        }
+        appExecutors.networkIO().execute(runnable)
     }
 
     override fun updateUser(name: String?, phoneNumber: String?, email: String?, userId: String) {
@@ -109,10 +112,13 @@ class FirebaseDataSource private constructor(private var appExecutors: AppExecut
         handler.postDelayed({ callback.onLoaded(entryList) }, SERVICE_LATENCY_MS)
     }
 
-    override fun getPosts(callback: DataSource.LoadCallback<Post>) {
-        val entryList = provider.getAllPosts()
-        val handler = Handler()
-        handler.postDelayed({ callback.onLoaded(entryList) }, SERVICE_LATENCY_MS)
+    override fun getPosts(tripId: String, callback: DataSource.LoadCallback<Post>) {
+        val runnable = Runnable {
+            appExecutors.mainThread().execute {
+                provider.getAllPosts(tripId, callback)
+            }
+        }
+        appExecutors.networkIO().execute(runnable)
     }
 
     override fun getPost(entryId: String, callback: DataSource.GetCallback<Post>) {

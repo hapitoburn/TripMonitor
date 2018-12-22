@@ -78,7 +78,12 @@ class AddEditTripViewModel : ViewModel(), DataSource.GetCallback<Trip>, DataSour
         dataLoading.set(false)
         mIsDataLoaded = true
         if(entity.users.isNotEmpty()){
+            users.clear()
             repository.getUsersFromList(entity.users, this)
+        }
+        if(entity.places.isNotEmpty()){
+            places.clear()
+            places.addAll(entity.places)
         }
     }
 

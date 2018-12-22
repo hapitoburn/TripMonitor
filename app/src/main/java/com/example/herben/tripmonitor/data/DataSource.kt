@@ -12,7 +12,6 @@ interface DataSource {
     }
     fun getActiveTrip(userId: String, callback: GetCallback<Trip>)
     fun updateActiveTripInfo(userId: String, tripId: String)
-    fun getPosts(callback: LoadCallback<Post>)
     fun getPost(entryId: String, callback: GetCallback<Post>)
     fun savePost(entry: Post)
     fun refreshPosts()
@@ -31,4 +30,5 @@ interface DataSource {
     fun insertUser(userId: String)
     fun updateUser(name: String?, phoneNumber: String?, email: String?, userId: String)
     fun getUsersFromList(users: List<String>,  callback: LoadCallback<User>)
+    fun getPosts(tripId: String, callback: LoadCallback<Post>)
 }

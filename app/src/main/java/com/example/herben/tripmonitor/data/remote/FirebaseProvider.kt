@@ -10,7 +10,7 @@ interface FirebaseProvider {
 
     fun deletePost(entryId: String)
 
-    fun getAllPosts(): List<Post>
+    fun getAllPosts(tripId: String, callback: DataSource.LoadCallback<Post>): List<Post>
 
     fun getPostById(entryId: String): Post?
 
@@ -27,7 +27,7 @@ interface FirebaseProvider {
     fun getActiveTrip(userId: String): Trip?
     fun updateActiveTrip(userId: String, tripId: String)
     fun updateUserInfo(name: String?, phoneNumber: String?, email: String?, userId: String)
-    fun getUsersFromList(users: List<String>): List<User>
+    fun getUsersFromList(users: List<String>, callback: DataSource.LoadCallback<User>): List<User>
     fun getUserId(callback : DataSource.GetCallback<User>)
 
 }

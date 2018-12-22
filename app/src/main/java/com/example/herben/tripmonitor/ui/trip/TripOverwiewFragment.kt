@@ -1,5 +1,7 @@
 package com.example.herben.tripmonitor.ui.trip
 
+import android.arch.lifecycle.Observer
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
@@ -9,6 +11,8 @@ import android.view.*
 import com.example.herben.tripmonitor.databinding.FragmentTripBinding
 
 import com.example.herben.tripmonitor.R
+import com.example.herben.tripmonitor.common.SimpleDividerItemDecoration
+import com.example.herben.tripmonitor.ui.addTrip.AddEditTripActivity
 import com.example.herben.tripmonitor.ui.addTrip.AddEditTripFragment
 
 class TripOverwiewFragment () : Fragment() {
@@ -52,9 +56,11 @@ class TripOverwiewFragment () : Fragment() {
 
         entriesList!!.layoutManager = layoutManager
 
-        //entriesList.addItemDecoration(SimpleDividerItemDecoration(context))
+        entriesList!!.addItemDecoration(SimpleDividerItemDecoration(context!!))
 
         entriesList!!.adapter = adapter
+
+        viewModel.leaderSetEditableEvent.observe(this, Observer { this@TripOverwiewFragment.setupFab() })
     }
 
     override fun onResume() {
@@ -69,7 +75,10 @@ class TripOverwiewFragment () : Fragment() {
 
     private fun setupFab() {
         val fab = activity!!.findViewById(R.id.fab_action_add) as FloatingActionButton
-        //fab.setOnClickListener { viewModel?.addNewEntry() }
+        fab.setOnClickListener {
+            val intent = Intent(activity, AddEditTripActivity::class.java)
+            intent.putExtra(AddEditTripFragment.ARGUMENT_EDIT_TRIP_ID, viewModel.trip.get()?.id)
+            activity?.startActivityForResult(intent, AddEditTripActivity.REQUEST_CODE) }
     }
 
 
@@ -84,8 +93,6 @@ class TripOverwiewFragment () : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         //setupSnackbar()
-
-        setupFab()
 
         //setupRefreshLayout()
     }

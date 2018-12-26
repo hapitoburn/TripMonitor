@@ -12,15 +12,17 @@ import android.databinding.ObservableList
 import android.graphics.drawable.Drawable
 import android.support.v4.app.FragmentActivity
 import android.util.Log
+import com.example.herben.tripmonitor.AuthActivity
 import com.example.herben.tripmonitor.common.Injection
 import com.example.herben.tripmonitor.common.SingleLiveEvent
 import com.example.herben.tripmonitor.data.Post
 import com.example.herben.tripmonitor.data.DataSource
 import com.example.herben.tripmonitor.data.Repository
+import com.example.herben.tripmonitor.data.User
 import java.util.ArrayList
 
 class BoardViewModel
-(context: Application) : AndroidViewModel(context) {
+(context: Application) : AndroidViewModel(context){
 
     companion object{
         fun obtain(activity: FragmentActivity): BoardViewModel{
@@ -69,24 +71,28 @@ class BoardViewModel
         if (forceUpdate) {
             repository.refreshPosts()
         }
+        val tripId = repository.user.entity?.trip ?: AuthActivity.getTripId()
 
-        repository.getPosts(object : DataSource.LoadCallback<Post> {
-            override fun onLoaded(entries: List<Post>) {
-                val entriesToShow = ArrayList<Post>(entries)
-                if (showLoadingUI) {
-                    dataLoading.set(false)
+        if(!tripId.isNullOrEmpty()) {
+            repository.getPosts(tripId.orEmpty(), object : DataSource.LoadCallback<Post> {
+                override fun onLoaded(entries: List<Post>) {
+                    val entriesToShow = ArrayList<Post>(entries)
+                    if (showLoadingUI) {
+                        dataLoading.set(false)
+                    }
+                    mIsDataLoadingError.set(false)
+                    posts.clear()
+                    posts.addAll(entriesToShow)
+                    empty.set(posts.isEmpty())
+                    Log.i("TOMASZ", posts.count().toString())
                 }
-                mIsDataLoadingError.set(false)
-                posts.clear()
-                posts.addAll(entriesToShow)
-                empty.set(posts.isEmpty())
-                Log.i("TOMASZ", posts.count().toString())
-            }
 
-            override fun onDataNotAvailable() {
-                mIsDataLoadingError.set(true)
-            }
-        })
+                override fun onDataNotAvailable() {
+                    mIsDataLoadingError.set(true)
+                }
+            })
+        }
+        else dataLoading.set(false)
     }
 
     internal fun getOpenEntryEvent(): SingleLiveEvent<String> {
@@ -101,6 +107,7 @@ class BoardViewModel
      * Called by the Data Binding library and the FAB's click listener.
      */
     fun addNewEntry() {
+        loadEntries(false)
         newEntryEvent.call()
     }
 

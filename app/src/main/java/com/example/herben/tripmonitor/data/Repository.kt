@@ -1,6 +1,7 @@
 package com.example.herben.tripmonitor.data
 
 import android.util.Log
+import com.example.herben.tripmonitor.AuthActivity
 import com.example.herben.tripmonitor.data.DataSource.GetCallback
 import com.example.herben.tripmonitor.data.DataSource.LoadCallback
 import java.util.*
@@ -8,15 +9,21 @@ import java.util.*
 
 class Repository private constructor(private val remoteDataSource: DataSource,
                                      private val localDataSource: DataSource) : DataSource {
-    internal var mCachedPosts = Cache<MutableMap<String, Post>>(LinkedHashMap())
-    internal var mTrip = Cache<Trip>()
-    internal var user = Cache<User>()
+    override fun getAlarms(tripId: String, callback: LoadCallback<Alarm>) {
+        remoteDataSource.getAlarms(tripId, callback)
+    }
+
+    override fun insertAlarm(alarm: Alarm) {
+        remoteDataSource.insertAlarm(alarm)
+        localDataSource.insertAlarm(alarm)
+    }
 
     fun loadUserId() {
         remoteDataSource.getUserId(
                 object : GetCallback<User> {
                     override fun onLoaded(entity: User?) {
                         user.entity = entity
+                        AuthActivity.setUserId(entity?.id)
                         loadUser()
                     }
                     override fun onDataNotAvailable() {
@@ -31,6 +38,7 @@ class Repository private constructor(private val remoteDataSource: DataSource,
                 object : GetCallback<User>{
                     override fun onLoaded(entity: User?) {
                         user.entity = entity
+                        AuthActivity.setTripId(entity?.trip)
                         user.isCacheDirty=false
                     }
                     override fun onDataNotAvailable() {
@@ -124,7 +132,7 @@ class Repository private constructor(private val remoteDataSource: DataSource,
     }
 
 
-    override fun getPosts(callback: LoadCallback<Post>) {
+    override fun getPosts(tripId: String, callback: LoadCallback<Post>) {
         checkNotNull(callback)
 
         if (!mCachedPosts.isCacheDirty) {
@@ -132,14 +140,23 @@ class Repository private constructor(private val remoteDataSource: DataSource,
             return
         }
 
-        localDataSource.getPosts(object : LoadCallback<Post> {
+        localDataSource.getPosts(tripId, object : LoadCallback<Post> {
             override fun onLoaded(entries: List<Post>) {
                 refreshPostsCache(entries)
                 callback.onLoaded(ArrayList<Post>(mCachedPosts.entity!!.values))
             }
 
             override fun onDataNotAvailable() {
-                getEntriesFromRemoteDataSource(callback)
+                getEntriesFromRemoteDataSource(tripId, object : LoadCallback<Post>{
+                    override fun onLoaded(entries: List<Post>) {
+                        callback.onLoaded(entries)
+                    }
+
+                    override fun onDataNotAvailable() {
+                        callback.onDataNotAvailable()
+                    }
+
+                } )
             }
         })
 
@@ -215,8 +232,8 @@ class Repository private constructor(private val remoteDataSource: DataSource,
     }
 
 
-    private fun getEntriesFromRemoteDataSource(callback: LoadCallback<Post>) {
-        remoteDataSource.getPosts(object : LoadCallback<Post> {
+    private fun getEntriesFromRemoteDataSource(tripId: String, callback: LoadCallback<Post>) {
+        remoteDataSource.getPosts(tripId, object : LoadCallback<Post> {
             override fun onLoaded(entries: List<Post>) {
                 refreshPostsCache(entries)
                 refreshLocalDataSource(entries)
@@ -244,7 +261,7 @@ class Repository private constructor(private val remoteDataSource: DataSource,
     private fun getTripsFromRemoteDataSource(callback: LoadCallback<Trip>) {
         remoteDataSource.getTrips(object : LoadCallback<Trip> {
             override fun onLoaded(entries: List<Trip>) {
-                callback.onLoaded(emptyList())
+                callback.onLoaded(entries)
             }
 
             override fun onDataNotAvailable() {
@@ -408,4 +425,8 @@ class Repository private constructor(private val remoteDataSource: DataSource,
             return INSTANCE!!
         }
     }
+
+    internal var mCachedPosts = Cache<MutableMap<String, Post>>(LinkedHashMap())
+    internal var mTrip = Cache<Trip>()
+    internal var user = Cache<User>()
 }

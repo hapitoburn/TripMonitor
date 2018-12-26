@@ -12,9 +12,7 @@ import android.support.v4.app.FragmentActivity
 import com.example.herben.tripmonitor.common.Injection
 import com.example.herben.tripmonitor.common.SingleLiveEvent
 import com.example.herben.tripmonitor.common.SnackbarMessage
-import com.example.herben.tripmonitor.data.DataSource
-import com.example.herben.tripmonitor.data.Repository
-import com.example.herben.tripmonitor.data.Trip
+import com.example.herben.tripmonitor.data.*
 import java.util.*
 
 class TripOverwiewViewModel (context: Application) : AndroidViewModel(context) {
@@ -26,7 +24,7 @@ class TripOverwiewViewModel (context: Application) : AndroidViewModel(context) {
     var body = ObservableField<String>()
     var dateFrom = ObservableField<Date>()
     var dateTo = ObservableField<Date>()
-    val places: ObservableList<String> = ObservableArrayList<String>()
+    val places: ObservableList<TripPlaceInfo> = ObservableArrayList<TripPlaceInfo>()
     var id = ObservableField<String>()
 
     val noTasksLabel = ObservableField<String>()

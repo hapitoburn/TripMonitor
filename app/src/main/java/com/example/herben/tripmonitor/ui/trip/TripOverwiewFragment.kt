@@ -72,15 +72,17 @@ class TripOverwiewFragment () : Fragment() {
     //    board?.getOpenEntryEvent()?.value = post.id?
     //}
 
-
     private fun setupFab() {
         val fab = activity!!.findViewById(R.id.fab_action_add) as FloatingActionButton
+        fab.setImageResource(R.drawable.ic_edit)
         fab.setOnClickListener {
-            val intent = Intent(activity, AddEditTripActivity::class.java)
-            intent.putExtra(AddEditTripFragment.ARGUMENT_EDIT_TRIP_ID, viewModel.trip.get()?.id)
-            activity?.startActivityForResult(intent, AddEditTripActivity.REQUEST_CODE) }
+            if (activity != null) {
+                val intent = Intent(activity, AddEditTripActivity::class.java)
+                intent.putExtra(AddEditTripFragment.ARGUMENT_EDIT_TRIP_ID, viewModel.trip.get()?.id)
+                activity?.startActivityForResult(intent, AddEditTripActivity.REQUEST_CODE)
+            }
+        }
     }
-
 
     /*override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item!!.itemId) {

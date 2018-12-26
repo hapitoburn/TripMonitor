@@ -6,17 +6,19 @@ import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
 import android.content.Context
 import com.example.herben.tripmonitor.common.DateConverter
+import com.example.herben.tripmonitor.data.Alarm
 import com.example.herben.tripmonitor.data.Post
 import com.example.herben.tripmonitor.data.Trip
 import com.example.herben.tripmonitor.data.User
 
-@Database(entities = arrayOf(Post::class, Trip::class, User::class), version = 6)
+@Database(entities = arrayOf(Post::class, Trip::class, User::class, Alarm::class), version = 9)
 @TypeConverters(DateConverter::class)
 abstract class LocalDatabase : RoomDatabase() {
 
     abstract fun posts(): PostDao
     abstract fun trips(): TripDao
     abstract fun users(): UserDao
+    abstract fun alarms(): AlarmDao
 
     companion object {
         private var INSTANCE: LocalDatabase? = null

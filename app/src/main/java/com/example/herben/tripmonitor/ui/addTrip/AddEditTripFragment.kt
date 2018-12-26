@@ -1,6 +1,5 @@
 package com.example.herben.tripmonitor.ui.addTrip
 
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.design.widget.FloatingActionButton
@@ -141,13 +140,13 @@ class AddEditTripFragment : Fragment(), PlaceAdapterListener {
     }
 
     private fun setupActionBar() {
-        /*val actionBar = (activity as AppCompatActivity).supportActionBar ?: return
+        val actionBar = (activity as AppCompatActivity).supportActionBar ?: return
         if (arguments != null && arguments!!.get(ARGUMENT_EDIT_TRIP_ID) != null) {
             actionBar.setTitle(R.string.edit_trip)
 
         } else {
-            actionBar.setTitle(R.string.add_post)
-        }*/
+            actionBar.setTitle(R.string.add_trip)
+        }
     }
 
 }

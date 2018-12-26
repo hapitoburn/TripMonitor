@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.example.herben.tripmonitor.R
 import com.example.herben.tripmonitor.common.Utils
+import com.example.herben.tripmonitor.data.TripPlaceInfo
 import com.google.android.gms.location.places.ui.PlaceAutocomplete
 
 
@@ -33,9 +34,9 @@ class AddEditTripActivity : AppCompatActivity() {
                 val place = PlaceAutocomplete.getPlace(this, data!!)
                 val viewModel = AddEditTripViewModel.obtain(this)
                 if(position==null)
-                    viewModel.places.add(place.address.toString())
+                    viewModel.places.add(TripPlaceInfo(place.address.toString()))
                 else
-                    viewModel.places.add(position, place.address.toString())
+                    viewModel.places.add(position, TripPlaceInfo(place.address.toString()))
 
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 val status = PlaceAutocomplete.getStatus(this, data!!)

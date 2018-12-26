@@ -1,9 +1,12 @@
 package com.example.herben.tripmonitor.ui.board
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.support.design.widget.TabLayout
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -12,6 +15,8 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.os.Bundle
+import android.provider.AlarmClock
+import android.support.annotation.RequiresApi
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
@@ -24,10 +29,10 @@ import android.view.ViewGroup
 import com.example.herben.tripmonitor.AuthActivity
 import com.example.herben.tripmonitor.R
 import com.example.herben.tripmonitor.common.Injection
-import com.example.herben.tripmonitor.data.DataSource
-import com.example.herben.tripmonitor.data.User
 import com.example.herben.tripmonitor.ui.addPost.AddEditPostActivity
 import com.example.herben.tripmonitor.ui.addTrip.AddEditTripActivity
+import com.example.herben.tripmonitor.ui.alarm.AlarmActivity
+import com.example.herben.tripmonitor.ui.contact.ContactsActivity
 import com.example.herben.tripmonitor.ui.searchTrip.SearchTripFragment
 import com.example.herben.tripmonitor.ui.trip.TripOverwiewFragment
 import com.example.herben.tripmonitor.ui.user.AddUserDetailsActivity
@@ -36,6 +41,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 import kotlinx.android.synthetic.main.activity_tabbed.*
 import kotlinx.android.synthetic.main.fragment_tabbed.view.*
+import java.util.*
 
 class TabbedActivity : AppCompatActivity(){
 
@@ -52,6 +58,7 @@ class TabbedActivity : AppCompatActivity(){
     private val TRIP_ID = "TripId"
     private lateinit var mAuthListener : FirebaseAuth.AuthStateListener
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //TODO check if above is safe
@@ -97,9 +104,16 @@ class TabbedActivity : AppCompatActivity(){
         drawer_layout.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
 
-
         // Set navigation view navigation item selected listener
         navigation.setNavigationItemSelectedListener{
+            val repository = Injection.provideRepository(applicationContext)
+            val name = repository.mTrip.entity?.name
+            if(name != null){
+                val navigationView = findViewById<NavigationView>(R.id.navigation)
+                if(navigationView!=null){
+                    navigationView.menu.findItem(R.id.active_group).title = name
+                }
+            }
             when (it.itemId) {
 
                 R.id.update_profile -> {
@@ -107,9 +121,12 @@ class TabbedActivity : AppCompatActivity(){
                     startActivity(activity)
                 }
                 R.id.contact -> {
-
+                    val activity = Intent(applicationContext, ContactsActivity::class.java)
+                    startActivity(activity)
                 }
                 R.id.alarms -> {
+                    val activity = Intent(this.applicationContext, AlarmActivity::class.java)
+                    startActivity(activity)
 
                 }
             }
@@ -171,6 +188,7 @@ class TabbedActivity : AppCompatActivity(){
                     val repository = Injection.provideRepository(applicationContext)
                     repository.invalidate()
                     AuthActivity.removeUserId()
+                    AuthActivity.removeTripId()
                     Log.i("TOMASZ", "completed")
                     finish()
                 }

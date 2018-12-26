@@ -3,15 +3,25 @@ package com.example.herben.tripmonitor.data.remote
 import android.content.SharedPreferences
 import android.os.Handler
 import com.example.herben.tripmonitor.common.AppExecutors
-import com.example.herben.tripmonitor.data.Post
-import com.example.herben.tripmonitor.data.DataSource
-import com.example.herben.tripmonitor.data.Trip
-import com.example.herben.tripmonitor.data.User
+import com.example.herben.tripmonitor.data.*
 import com.google.firebase.auth.FirebaseAuth
 
 class FirebaseDataSource private constructor(private var appExecutors: AppExecutors, private var provider: FirebaseProvider) : DataSource {
-    override fun getUserId(callback: DataSource.GetCallback<User>) {
+    override fun getAlarms(tripId: String, callback: DataSource.LoadCallback<Alarm>) {
+        val runnable = Runnable {
+            appExecutors.mainThread().execute {
+                provider.getAlarms(tripId, callback)
+            }
+        }
+        appExecutors.networkIO().execute(runnable)
+    }
 
+    override fun insertAlarm(alarm: Alarm) {
+        val runnable = Runnable { provider.insertAlarm(alarm) }
+        appExecutors.networkIO().execute(runnable)
+    }
+
+    override fun getUserId(callback: DataSource.GetCallback<User>) {
         val runnable = Runnable {
             appExecutors.mainThread().execute {
                 provider.getUserId(callback)
@@ -60,13 +70,8 @@ class FirebaseDataSource private constructor(private var appExecutors: AppExecut
 
     override fun getUser(entryId: String, callback: DataSource.GetCallback<User>) {
         val runnable = Runnable {
-            val entry = provider.getUserById(entryId, callback)
             appExecutors.mainThread().execute {
-                if (entry != null) {
-                    callback.onLoaded(entry)
-                } else {
-                    callback.onDataNotAvailable()
-                }
+                provider.getUserById(entryId, callback)
             }
         }
         appExecutors.networkIO().execute(runnable)

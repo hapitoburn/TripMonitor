@@ -3,18 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        tools:background="@color/com_facebook_button_background_color">
+        tools:background="@color/color3">
 
         <TextView
             android:id="@+id/name"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/add_button"
             android:layout_marginTop="8dp"
-            android:layout_weight="6"
             android:text="@string/name"
             android:textColor="#000000"
             android:textSize="22sp" />
@@ -24,7 +25,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginTop="8dp"
-            android:layout_weight="1"
+            android:layout_toStartOf="@+id/delete_button"
             android:background="@android:drawable/ic_input_add" />
 
         <Button
@@ -32,7 +33,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginTop="8dp"
-            android:layout_weight="1"
+            android:layout_toStartOf="@+id/up_button"
             android:background="@android:drawable/ic_input_delete" />
 
         <Button
@@ -40,15 +41,16 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginTop="8dp"
-            android:layout_weight="1"
-            android:background="@android:drawable/arrow_up_float" />
+            android:layout_toStartOf="@+id/down_button"
+            android:background="@drawable/ic_baseline_arrow_drop_up_24px" />
 
         <Button
             android:id="@+id/down_button"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginTop="8dp"
-            android:background="@android:drawable/arrow_down_float" />
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/ic_baseline_arrow_drop_down_24px" />
 
-    </LinearLayout>
+    </RelativeLayout>
 </layout>

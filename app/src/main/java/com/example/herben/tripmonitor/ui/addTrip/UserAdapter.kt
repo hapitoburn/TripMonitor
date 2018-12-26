@@ -1,5 +1,6 @@
 package com.example.herben.tripmonitor.ui.addTrip
 
+import android.databinding.BindingAdapter
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -70,5 +71,10 @@ class UserAdapter  : RecyclerView.Adapter<UserAdapter.ViewHolder>() {
         list = entries
         notifyDataSetChanged()
     }
+}
+@BindingAdapter("app:userAdapterItems")
+fun RecyclerView.set(users: List<User>) {
+    val ad = this.adapter as UserAdapter
+    ad.replaceData(users)
 }
 

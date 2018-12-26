@@ -6,7 +6,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.herben.tripmonitor.data.Post
 import com.example.herben.tripmonitor.data.Trip
-import com.example.herben.tripmonitor.databinding.StringItemBinding
+import com.example.herben.tripmonitor.data.TripPlaceInfo
+import com.example.herben.tripmonitor.databinding.ItemPlaceDetailsBinding
 
 class TripOverviewAdapter(/*private val mOnClickListener: ListItemClickListener?*/) : RecyclerView.Adapter<TripOverviewAdapter.TripViewHolder>() {
 
@@ -20,7 +21,7 @@ class TripOverviewAdapter(/*private val mOnClickListener: ListItemClickListener?
 
         val inflater = LayoutInflater.from(parent.context)
 
-        val view = StringItemBinding.inflate(inflater)
+        val view = ItemPlaceDetailsBinding.inflate(inflater)
 
         return TripViewHolder(view)
     }
@@ -39,11 +40,13 @@ class TripOverviewAdapter(/*private val mOnClickListener: ListItemClickListener?
         return if (trip != null) trip?.places?.size!! else 0
     }
 
-    inner class TripViewHolder(val binding: StringItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class TripViewHolder(val binding: ItemPlaceDetailsBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(place: String?) {
+        fun bind(info: TripPlaceInfo?) {
             with(binding) {
-                name.text = place
+                name.text = info?.name
+                date.text = info?.date.toString()
+                details.text = info?.details
             }
         }
 
@@ -54,7 +57,7 @@ class TripOverviewAdapter(/*private val mOnClickListener: ListItemClickListener?
         //        }
     }
 
-    fun replaceData(places: List<String>) {
+    fun replaceData(places: List<TripPlaceInfo>) {
         trip?.places = places
         notifyDataSetChanged()
     }

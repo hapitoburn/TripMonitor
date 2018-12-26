@@ -1,18 +1,50 @@
 package com.example.herben.tripmonitor.data.local
 
 import com.example.herben.tripmonitor.common.AppExecutors
-import com.example.herben.tripmonitor.data.Post
-import com.example.herben.tripmonitor.data.DataSource
-import com.example.herben.tripmonitor.data.Trip
-import com.example.herben.tripmonitor.data.User
+import com.example.herben.tripmonitor.data.*
 
 
 class LocalDataSource// Prevent direct instantiation.
 private constructor(private val appExecutors: AppExecutors,
                     private val posts: PostDao,
                     private val users: UserDao,
-                    private val trips: TripDao) : DataSource {
+                    private val trips: TripDao,
+                    private val alarms: AlarmDao) : DataSource {
+    override fun getAlarms(tripId: String, callback: DataSource.LoadCallback<Alarm>) {
+        val runnable = Runnable {
+            val entryList = alarms.getAlarms(tripId)
+            appExecutors.mainThread().execute {
+                if (entryList.isEmpty()) {
+                    callback.onDataNotAvailable()
+                } else {
+                    callback.onLoaded(entryList)
+                }
+            }
+        }
+        appExecutors.diskIO().execute(runnable)
+    }
+
+    override fun insertAlarm(alarm: Alarm) {
+        val runnable = Runnable { alarms.insert(alarm) }
+        appExecutors.diskIO().execute(runnable)
+    }
+
+    override fun getPosts(tripId: String, callback: DataSource.LoadCallback<Post>) {
+        val runnable = Runnable {
+            val entryList = posts.getPosts()
+            appExecutors.mainThread().execute {
+                if (entryList.isEmpty()) {
+                    callback.onDataNotAvailable()
+                } else {
+                    callback.onLoaded(entryList)
+                }
+            }
+        }
+        appExecutors.diskIO().execute(runnable)
+    }
+
     override fun getUserId(callback: DataSource.GetCallback<User>) {
+        //not needed
     }
     override fun getUsersFromList(users: List<String>, callback: DataSource.LoadCallback<User>) {
     }
@@ -128,21 +160,6 @@ private constructor(private val appExecutors: AppExecutors,
         appExecutors.diskIO().execute(runnable)
     }
 
-    override fun getPosts(callback: DataSource.LoadCallback<Post>) {
-        val runnable = Runnable {
-            val entryList = posts.getPosts()
-            appExecutors.mainThread().execute {
-                if (entryList.isEmpty()) {
-                    callback.onDataNotAvailable()
-                } else {
-                    callback.onLoaded(entryList)
-                }
-            }
-        }
-        appExecutors.diskIO().execute(runnable)
-    }
-
-
     override fun getPost(entryId: String, callback: DataSource.GetCallback<Post>) {
         val runnable = Runnable {
             val journalEntry = posts.getPostById(entryId)
@@ -192,7 +209,7 @@ private constructor(private val appExecutors: AppExecutors,
             if (INSTANCE == null) {
                 synchronized(LocalDataSource::class.java) {
                     if (INSTANCE == null) {
-                        INSTANCE = LocalDataSource(appExecutors, database.posts(), database.users(), database.trips())
+                        INSTANCE = LocalDataSource(appExecutors, database.posts(), database.users(), database.trips(), database.alarms())
                     }
                 }
             }

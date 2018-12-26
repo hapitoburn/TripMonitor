@@ -31,13 +31,30 @@
                 android:id="@+id/name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/colorMain"
+                android:gravity="center"
                 android:hint="@string/name"
-                android:shadowColor="@color/colorAccent"
                 android:text="@{viewmodel.name}"
                 android:textColor="@color/browser_actions_text_color"
                 android:textColorHighlight="@color/colorAccent"
                 android:textSize="18sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color1"
+                android:gravity="center"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:hint="@string/name"
+                android:text="@{viewmodel.body}"
+                android:textColor="@color/browser_actions_text_color"
+                android:textColorHighlight="@color/colorAccent"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
 
 
             <android.support.v7.widget.RecyclerView
@@ -45,6 +62,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:background="@color/color3"
                 app:items="@{viewmodel.places}" />
 
 

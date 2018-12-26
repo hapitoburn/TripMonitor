@@ -1,24 +1,42 @@
 package com.example.herben.tripmonitor.data.remote
 
 import android.util.Log
-import com.example.herben.tripmonitor.data.DataSource
-import com.example.herben.tripmonitor.data.Post
-import com.example.herben.tripmonitor.data.Trip
-import com.example.herben.tripmonitor.data.User
+import com.example.herben.tripmonitor.data.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
 
 class RemoteDatabase : FirebaseProvider{
-    var userById : User? = null
+    override fun getAlarms(tripId: String, callback: DataSource.LoadCallback<Alarm>) {
+
+        databaseReference.child("Alarms").child(tripId).addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val entries : MutableList<Alarm> = mutableListOf()
+                for (entrySnapshot in dataSnapshot.children) {
+                    val entry = entrySnapshot.getValue<Alarm>(Alarm::class.java)
+                    entries.add(entry!!)
+                }
+                callback.onLoaded(entries)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                callback.onDataNotAvailable()
+                Log.e("DatabaseError", databaseError.details)
+            }
+        })
+    }
+
+    override fun insertAlarm(alarm: Alarm) {
+        databaseReference.child("Alarms").child(alarm.tripId!!).child(alarm.id).setValue(alarm)
+    }
+
     override fun getUserId(callback: DataSource.GetCallback<User>) {
         checkoutUser()
         Log.i("TOMASZ", "RemoteDatabase : Getting userId from uid=$usersUid")
-        var entry : User? = null
         databaseReference.child("Users").child(usersUid).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val temp = dataSnapshot.getValue<User>(User::class.java)
-                entry = getUserById(temp!!.id, callback)
+                getUserById(temp!!.id, callback)
             }
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.e("TOMASZ", "getUserId failed")
@@ -27,7 +45,7 @@ class RemoteDatabase : FirebaseProvider{
         })
     }
 
-    override fun getUsersFromList(users: List<String>, callback: DataSource.LoadCallback<User>): List<User> {
+    override fun getUsersFromList(users: List<String>, callback: DataSource.LoadCallback<User>) {
         val entries : MutableList<User> = mutableListOf()
 
         databaseReference.child("PublicUsers").addValueEventListener(object : ValueEventListener {
@@ -48,7 +66,6 @@ class RemoteDatabase : FirebaseProvider{
                 callback.onDataNotAvailable()
             }
         })
-        return entries
     }
 
     override fun updateUserInfo(name: String?, phoneNumber: String?, email: String?, userId: String) {
@@ -89,10 +106,10 @@ class RemoteDatabase : FirebaseProvider{
         return trip
     }
 
-    override fun getUserById(entryId: String, callback: DataSource.GetCallback<User>): User? {
+    override fun getUserById(entryId: String, callback: DataSource.GetCallback<User>) {
         databaseReference.child("PublicUsers").child(entryId).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                userById = dataSnapshot.getValue<User>(User::class.java)
+                val userById = dataSnapshot.getValue<User>(User::class.java)
                 callback.onLoaded(userById)
             }
             override fun onCancelled(databaseError: DatabaseError) {
@@ -100,7 +117,6 @@ class RemoteDatabase : FirebaseProvider{
                 Log.e("Read Posts", "Failed")
             }
         })
-        return userById
     }
 
     override fun getAllUsers(): List<User> {
@@ -139,12 +155,11 @@ class RemoteDatabase : FirebaseProvider{
         return entries
     }
 
-    override fun getTripById(entryId: String, callback: DataSource.GetCallback<Trip>): Trip? {
+    override fun getTripById(entryId: String, callback: DataSource.GetCallback<Trip>){
         checkoutUser()
-        var tripEntry : Trip? = null
         databaseReference.child("Trip").child(entryId).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                tripEntry = dataSnapshot.getValue<Trip>(Trip::class.java)
+                val tripEntry = dataSnapshot.getValue<Trip>(Trip::class.java)
                 callback.onLoaded(tripEntry)
             }
 
@@ -153,7 +168,6 @@ class RemoteDatabase : FirebaseProvider{
                 callback.onDataNotAvailable()
             }
         })
-        return tripEntry
     }
 
     override fun insertTrip(entry: Trip) {
@@ -191,12 +205,11 @@ class RemoteDatabase : FirebaseProvider{
         checkoutUser()
     }
 
-    override fun getAllPosts(tripId: String, callback: DataSource.LoadCallback<Post>): List<Post> {
+    override fun getAllPosts(tripId: String, callback: DataSource.LoadCallback<Post>) {
         checkoutUser()
-        val postEntries : MutableList<Post> = mutableListOf()
-        databaseReference.child("Posts").child(usersUid).addValueEventListener(object : ValueEventListener {
+        databaseReference.child("Posts").child(tripId).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                postEntries.clear()
+                val postEntries : MutableList<Post> = mutableListOf()
                 for (entrySnapshot in dataSnapshot.children) {
                     val entry = entrySnapshot.getValue<Post>(Post::class.java)
                     postEntries.add(entry!!)
@@ -208,7 +221,6 @@ class RemoteDatabase : FirebaseProvider{
                 Log.e("DatabaseError", databaseError.details)
             }
         })
-        return postEntries
     }
 
     override fun getPostById(entryId: String): Post? {

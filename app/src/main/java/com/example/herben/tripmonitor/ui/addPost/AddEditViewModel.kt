@@ -81,7 +81,12 @@ class AddEditViewModel(application: Application) : AndroidViewModel(application)
 
     // Called when clicking on fab.
     internal fun saveEntry() {
-        var entry = Post(title.get(), body.get(), currentDateTime)
+        var entry = Post(title.get(),
+                body.get(),
+                currentDateTime,
+                postRepository.user.entity!!.id ,
+                tripId = postRepository.user.entity!!.trip)
+
         if (entry.title.isEmpty() || entry.body.isEmpty()) {
             snackbarMessage.setValue(R.string.empty_post_message)
             return
@@ -89,7 +94,12 @@ class AddEditViewModel(application: Application) : AndroidViewModel(application)
         if (isNewEntry || mEntryId == null) {
             createTask(entry)
         } else {
-            entry = Post(title.get(), body.get(),  currentDateTime, mEntryId!!)
+            entry = Post(title.get(),
+                    body.get(),
+                    currentDateTime,
+                    userId = postRepository.user.entity!!.id ,
+                    tripId = postRepository.user.entity!!.trip,
+                    id = mEntryId!!)
             updateTask(entry)
         }
     }

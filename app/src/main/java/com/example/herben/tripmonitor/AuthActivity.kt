@@ -112,6 +112,7 @@ class AuthActivity : AppCompatActivity() {
         const val USER_UID = "UserUid"
         const val USER_ID = "UserId"
         const val NEW_USER = "IsUserNew"
+        const val TRIP_ID = "TripId"
         fun getContextOfApplication(): Context {
             return instance.applicationContext
         }
@@ -132,11 +133,27 @@ class AuthActivity : AppCompatActivity() {
             prefs.putString(USER_ID, id)
             prefs.apply()
         }
-
+        fun setTripId(id: String?) {
+            if(id == null)
+                return
+            val prefs = getContextOfApplication().getSharedPreferences(USER, Context.MODE_PRIVATE).edit()
+            prefs.putString(TRIP_ID, id)
+            prefs.apply()
+        }
         fun removeUserId() {
             val prefs = getContextOfApplication().getSharedPreferences(USER, Context.MODE_PRIVATE).edit()
             prefs.putString(USER_ID, "")
             prefs.apply()
+        }
+        fun removeTripId() {
+            val prefs = getContextOfApplication().getSharedPreferences(USER, Context.MODE_PRIVATE).edit()
+            prefs.putString(TRIP_ID, "")
+            prefs.apply()
+        }
+
+        fun getTripId(): String? {
+            return getContextOfApplication().
+                    getSharedPreferences(USER, MODE_PRIVATE).getString(TRIP_ID, "")
         }
 
         lateinit var instance: AuthActivity private set

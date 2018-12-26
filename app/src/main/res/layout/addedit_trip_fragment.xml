@@ -35,6 +35,7 @@
                     android:id="@+id/add_task_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@color/color1"
                     android:hint="@string/title"
                     android:inputType="text"
                     android:maxLines="1"
@@ -45,9 +46,10 @@
                     android:id="@+id/add_task_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@color/colorMain"
                     android:gravity="top"
                     android:hint="@string/body"
-                    android:inputType="text"
+                    android:inputType="textCapSentences|textMultiLine"
                     android:text="@={viewmodel.body}" />
 
                 <android.support.v7.widget.RecyclerView
@@ -59,25 +61,26 @@
                     android:id="@+id/button_add_place"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/add"/>
+                    android:text="place"/>
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/users_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:items="@{viewmodel.users}" />
+                    app:userAdapterItems="@{viewmodel.users}" />
 
                 <EditText
                     android:id="@+id/input_add_user"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@color/color1"
                     android:hint="@string/phone_or_email"
                     android:text="@={viewmodel.userToAdd}" />
                 <android.support.v7.widget.AppCompatButton
                     android:id="@+id/button_add_user"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Add"
+                    android:text="user"
                     android:onClick="@{() -> viewmodel.addUser()}"/>
             </LinearLayout>
         </ScrollView>

@@ -42,7 +42,6 @@ class SearchTripFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        setupFab()
     }
 
     override fun onResume() {
@@ -70,12 +69,19 @@ class SearchTripFragment : Fragment() {
     //    board?.getOpenEntryEvent()?.value = post.id?
     //}
 
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        setupFab()
+    }
 
     private fun setupFab() {
+        if(activity==null)
+            return
         val fab = activity!!.findViewById(R.id.fab_action_add) as FloatingActionButton
+        fab.setImageResource(R.drawable.ic_add)
         fab.setOnClickListener {
             val intent = Intent(activity, AddEditTripActivity::class.java)
-            Log.i("TOMASZ", "dodaj nowy post")
+            Log.i("TOMASZ", "add trip from search")
             activity!!.startActivity(intent)
         }
     }

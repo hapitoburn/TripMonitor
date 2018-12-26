@@ -13,6 +13,7 @@ interface DataSource {
     fun getActiveTrip(userId: String, callback: GetCallback<Trip>)
     fun updateActiveTripInfo(userId: String, tripId: String)
     fun getPost(entryId: String, callback: GetCallback<Post>)
+    fun getPosts(tripId: String, callback: LoadCallback<Post>)
     fun savePost(entry: Post)
     fun refreshPosts()
     fun deleteAllPosts()
@@ -30,5 +31,8 @@ interface DataSource {
     fun insertUser(userId: String)
     fun updateUser(name: String?, phoneNumber: String?, email: String?, userId: String)
     fun getUsersFromList(users: List<String>,  callback: LoadCallback<User>)
-    fun getPosts(tripId: String, callback: LoadCallback<Post>)
+
+    fun getAlarms(tripId: String, callback: LoadCallback<Alarm>)
+    fun insertAlarm(alarm: Alarm)
+
 }

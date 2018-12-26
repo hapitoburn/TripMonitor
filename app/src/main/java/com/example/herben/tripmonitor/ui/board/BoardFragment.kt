@@ -52,9 +52,6 @@ class BoardFragment : Fragment()/*, BoardAdapter.ListItemClickListener*/ {
         val layoutManager = LinearLayoutManager(context)
 
         entriesList!!.layoutManager = layoutManager
-
-        //entriesList.addItemDecoration(SimpleDividerItemDecoration(context))
-
         entriesList!!.adapter = adapter
         Log.i("TOMASZ", "BOARD created")
     }

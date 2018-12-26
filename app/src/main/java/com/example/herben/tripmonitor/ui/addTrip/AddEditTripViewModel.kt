@@ -9,10 +9,7 @@ import com.example.herben.tripmonitor.R
 import com.example.herben.tripmonitor.common.Injection
 import com.example.herben.tripmonitor.common.SingleLiveEvent
 import com.example.herben.tripmonitor.common.SnackbarMessage
-import com.example.herben.tripmonitor.data.DataSource
-import com.example.herben.tripmonitor.data.Repository
-import com.example.herben.tripmonitor.data.Trip
-import com.example.herben.tripmonitor.data.User
+import com.example.herben.tripmonitor.data.*
 import java.util.*
 
 class AddEditTripViewModel : ViewModel(), DataSource.GetCallback<Trip>, DataSource.LoadCallback<User>{
@@ -21,10 +18,10 @@ class AddEditTripViewModel : ViewModel(), DataSource.GetCallback<Trip>, DataSour
     val body = ObservableField<String>()
     val dateFrom = ObservableField<Date>()
     val dateTo = ObservableField<Date>()
-    val places = ObservableArrayList<String>()
+    val places = ObservableArrayList<TripPlaceInfo>()
     val dataLoading = ObservableBoolean(false)
     val userToAdd = ObservableField<String>()
-    var users: ObservableList<User> = ObservableArrayList<User>()
+    var users = ObservableArrayList<User>()
     var usersHolder = UsersHolder()
 
     internal val snackbarMessage = SnackbarMessage()

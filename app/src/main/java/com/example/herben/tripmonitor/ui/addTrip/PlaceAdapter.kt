@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.herben.tripmonitor.R
+import com.example.herben.tripmonitor.data.TripPlaceInfo
 import com.example.herben.tripmonitor.databinding.ItemTripPlaceBinding
 import com.example.herben.tripmonitor.ui.trip.TripOverviewAdapter
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException
@@ -17,7 +18,7 @@ import kotlinx.android.synthetic.main.item_trip_place.view.*
 
 class PlaceAdapter (listener: PlaceAdapterListener)  : RecyclerView.Adapter<PlaceAdapter.ViewHolder>() {
     private var placeAdapterListener = listener
-    private var list: ArrayList<String>? = null
+    private var list: ArrayList<TripPlaceInfo>? = null
 
     interface ListItemClickListener {
         fun onListItemClick(place: String)
@@ -95,9 +96,9 @@ class PlaceAdapter (listener: PlaceAdapterListener)  : RecyclerView.Adapter<Plac
                 notifyItemMoved(currentPosition, currentPosition + 1)
             }
         }
-        fun bind(item: String?) {
+        fun bind(item: TripPlaceInfo?) {
             with(binding) {
-                name.text = item
+                name.text = item?.name
                 Log.i("TOM", "text binding sth wrong? $item")
             }
         }
@@ -109,18 +110,18 @@ class PlaceAdapter (listener: PlaceAdapterListener)  : RecyclerView.Adapter<Plac
         //        }
     }
 
-    fun replaceData(entries: ArrayList<String>) {
+    fun replaceData(entries: ArrayList<TripPlaceInfo>) {
         setList(entries)
     }
 
-    private fun setList(entries: ArrayList<String>) {
+    private fun setList(entries: ArrayList<TripPlaceInfo>) {
         list = entries
         notifyDataSetChanged()
     }
 }
 
 @BindingAdapter("app:items")
-fun RecyclerView.set(places: List<String>) {
+fun RecyclerView.set(places: List<TripPlaceInfo>) {
     if(this.adapter is PlaceAdapter) {
         val ad = adapter as PlaceAdapter
         ad.replaceData(ArrayList(places))

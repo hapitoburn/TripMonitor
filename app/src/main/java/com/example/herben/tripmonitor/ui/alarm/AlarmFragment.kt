@@ -95,6 +95,7 @@ class AlarmFragment : Fragment(), AlarmListener {
         openClockIntent.putExtra(AlarmClock.EXTRA_HOUR, calendar.get(Calendar.HOUR_OF_DAY));
         openClockIntent.putExtra(AlarmClock.EXTRA_MINUTES, Calendar.MINUTE);
         openClockIntent.putExtra(AlarmClock.EXTRA_DAYS, Calendar.DAY_OF_WEEK);
+        openClockIntent.putExtra(AlarmClock.EXTRA_MESSAGE, alarm.name)
         activity!!.startActivity(openClockIntent);
     }
 
